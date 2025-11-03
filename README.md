@@ -17,10 +17,10 @@
     - установка Mosquitto Broker на Raspberry Pi
     `sudo apt install -y mosquitto mosquitto-clients`
     - настройка автоматического запуска Mosquitto Broker при загрузке RPI - `sudo systemctl enable mosquitto.service`
-    - для удаленного доступа без аутентификации в конфигурационный файл /etc/mosquitto/mosquitto.conf добавить:  
-        `listener 1883`  
-        `allow_anonymous true`
-- Можно использовать Mosquitto Brocker в докер-контейнере:
+    - для удаленного доступа без аутентификации в конфигурационный файл /etc/mosquitto/mosquitto.conf добавить:
+        `allow_anonymous true`  
+        `listener 1883 0.0.0.0`  
+    - Можно использовать Mosquitto Brocker в докер-контейнере:
     - создать файл mosquitto.conf в домашней директории
     - запустить Mosquitto Broker в контейнере  - `docker run -d --restart always --name <name> -p 1883:1883 -v $HOME/mosquitto.conf:/mosquitto/config/mosquitto.conf eclipse-mosquitto:2`
 
@@ -28,7 +28,7 @@
 - Настройка расписания выполнения задач с использованием Cron 
     - `crontab -e`
     - `* * * * * cd <path_to_project_directory> && <env name>/bin/flask <command_name>`
-- когда проет запущен, в терминале запускаем команду - `(.venv) $  flask --help`. В разделе Commands видим команду (в данном проекте - `scheduled Cron job`)
+- когда проект запущен, в терминале запускаем команду - `(.venv) $  flask --help`. В разделе Commands видим команду (в данном проекте - `scheduled Cron job`)
 - когда проет запущен, в терминале запускаем команду - в данном проекте - `(.venv) $  flask scheduled`. В разделе Commands видим перечень задач
 
 ---
@@ -40,14 +40,15 @@
 #### Деплой
 - установить supervisor - `sudo apt install supervisor`
 - создать файл конфигурации supervisor /etc/supervisor/conf.d/meteo.conf  
-&nbsp;&nbsp;&nbsp;&nbsp;`[program:meteo]`  
-&nbsp;&nbsp;&nbsp;&nbsp;`command=/<path-to-project>/.venv/bin/gunicorn -k gevent -b 0.0.0.0:8000 meteo:app`  
-&nbsp;&nbsp;&nbsp;&nbsp;`directory=/<path-to-project>`  
-&nbsp;&nbsp;&nbsp;&nbsp;`user=<username>`  
-&nbsp;&nbsp;&nbsp;&nbsp;`autostart=true`  
-&nbsp;&nbsp;&nbsp;&nbsp;`autorestart=true`  
-&nbsp;&nbsp;&nbsp;&nbsp;`stopasgroup=true`  
-&nbsp;&nbsp;&nbsp;&nbsp;`killasgroup=true` 
+`[program:meteo]`  
+`command=/<path-to-project>/.venv/bin/gunicorn -k gevent -b 0.0.0.0:8000 meteo:app`  
+`directory=/<path-to-project>`  
+`user=<username>`  
+`autostart=true`  
+`autorestart=true`  
+`stopasgroup=true`  
+`killasgroup=true` 
+
 - команды: `sudo supervisorctl reload`, `sudo supervisorctl start/stop meteo`
 
 #### Деплой в докер-контейнере
