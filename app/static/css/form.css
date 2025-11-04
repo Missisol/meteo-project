@@ -1,0 +1,123 @@
+.section-form {
+    height: 64px;
+    overflow: clip;
+    transition: height .2s ease;
+
+    &.open {
+        height: auto;
+    }
+
+    & .form-title {
+        font-size: 20px;
+        margin-block-end: var(--gap8);
+    }
+
+    & .button-toggle {
+        background: transparent;
+        border: none;
+        color: inherit;
+        font-family: inherit;
+        display: inline-flex;
+        align-items: center;
+    
+        &::after {
+            content: "";
+            border: 6px solid transparent;
+            border-top-color: var(--base-grey-color);
+            margin-left: var(--gap4);
+            transform: translateY(-2px);
+        }  
+        
+        &[aria-expanded=true]::after {
+            border-top-color: transparent;
+            border-bottom-color: var(--base-grey-color);
+            transform: translateY(-12px);
+        }
+    }
+
+    & .form {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--gap16);
+        /* margin-block: var(--gap8); */
+        transition: opacity .3s ease;
+
+        @media (width < 600px ) {
+            flex-direction: column;
+        }
+    }
+
+    & .calendar-wrapper {
+        display: flex;
+        gap: var(--gap8);
+
+        @media (width < 600px ) {
+            flex-direction: column;
+        }
+    }
+
+    & .input-wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--gap4) var(--gap8);
+    }
+
+    & .buttons {
+        display: flex;
+        gap: var(--gap8);
+        align-items: flex-end;
+    }
+
+    & .input {
+        padding: var(--gap2) var(--gap8);
+        border: 1px solid var(--base-grey-color);
+        border-radius: var(--gap4);
+        background-color: var(--base-color);
+    }
+
+    & .button {
+        appearance: none;
+        padding: calc(var(--gap5) / 2) var(--gap8);
+        border: 1px solid var(--base-blue-color);
+        border-radius: var(--gap4);
+        background-color: var(--base-blue-color);
+        color: var(--light-grey-color);
+        font-weight: bold;
+        transition: background-color .1s ease-in-out;
+
+        &:hover {
+            background-color: var(--medium-blue-color);
+        }
+    }
+
+    & .button-change {
+        width: min-content;
+        align-self: end;
+        background-color: transparent;
+        border: none;
+        cursor: pointer;
+
+        @media (width < 600px ) {
+            align-self:initial;
+            transform: rotate(90deg)
+        }
+
+        &:hover {
+            background-color: transparent;
+
+            /* & .svg-change {
+                color: var(--accent-color);
+            } */
+        }
+    }
+
+    & .svg-change {
+        min-width: 24px;
+        color: var(--base-grey-color);
+    }
+
+    & .form__error {
+        color: var(--light-red-color);
+    }
+}

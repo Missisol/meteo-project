@@ -1,0 +1,20 @@
+{
+  "name": "Meteo project",
+  "short_name": "Meteo",
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "transparent",
+  "background_color": "transparent",
+  "icons": [
+    {
+      "type": "image/png",
+      "sizes": "128x128",
+      "src": "/static/icons/icon-128.png"
+    },
+    {
+      "type": "image/png",
+      "sizes": "192x192",
+      "src": "/static/icons/icon-192.png"
+    }
+  ]
+}

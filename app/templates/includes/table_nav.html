@@ -1,0 +1,21 @@
+{% if prev_url or next_url%}
+    {% if next_url %}
+    <div class="nav__link">
+        &lt;&nbsp;<a href="{{ next_url }}">Pev</a>
+    </div>
+    {% else %}
+    <div class="nav__inactive">
+        &lt;&nbsp;<span>Pev</span>
+    </div>
+    {% endif %}
+    {% if prev_url %}
+        <div class="nav__link">
+            <a href="{{ prev_url }}">Next</a>&nbsp;&gt;
+        </div>
+    {% else %}
+    <div class="nav__inactive">
+        <span>Next</span>&nbsp;&gt;
+        </div>
+    {% endif %}
+{% endif %}
+

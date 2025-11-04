@@ -1,0 +1,66 @@
+.home {
+    display: flex;
+    flex-direction: column;
+    gap: var(162);
+  }
+
+  .page-title {
+    font-size: 32px;
+    margin-bottom: var(--gap8);
+  }
+  
+  
+  .box-wrapper {
+    display: grid;
+    gap: var(--gap8);
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  }
+
+  .box-link {
+    display: block;
+    color: var(--base-blue-color);
+    margin-block-end: var(--gap8);
+  }
+  
+  .box {
+    display: flex;
+    gap: var(--gap8);
+    align-items: center;
+    font-size: 20px;
+  }
+  
+  .sensor-icon--temperature,
+  .box__data--temperature {
+    color: var(--base-green-color);
+  }
+  
+  .sensor-icon--humidity,
+  .box__data--humidity {
+    color: var(--base-blue-color);
+  }
+  
+  .sensor-icon--pressure,
+  .box__data--pressure {
+    color: var(--base-magenta-color);
+  }
+
+  .section {
+    padding-block-start: var(--gap8);
+    padding-block-end: var(--gap16);
+    /* margin-block-end: var(--gap16); */
+  }
+
+  .section:has(+ .section) {
+    border-block-end: 1px solid var(--base-grey-color);
+  }
+
+  .chart-wrapper {
+    padding-block: var(--gap8);
+  }
+
+  /* chart style */
+  .apexcharts-yaxis-label, 
+  .apexcharts-xaxis-label {
+    fill: #b2b0b0;
+  }
+  

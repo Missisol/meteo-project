@@ -1,0 +1,5 @@
+SECRET_KEY=''
+RPI_URL='xxx.xxx.x.xxx'
+MQTT_TOPIC_BME280=''
+MQTT_TOPIC_DHT22=''
+DATABASE_URL='sqlite:////...'

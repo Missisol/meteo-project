@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    {% block head %}
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="color-scheme" content="light dark">
+      {% if title %}
+      <title>{{ title }}</title>
+      {% else %}
+      <title>Meteo</title>
+      {% endif %}
+      <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css')}}" />
+      <link rel="stylesheet" href="{{ url_for('static', filename='css/header.css')}}" />
+      <link rel="shortcut icon" href="{{ url_for('static', filename='favicon-dev.ico') }}">
+      <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
+    {% endblock %}
+  </head>
+  <body>
+    <div class="container">
+      <div class="full-width">
+        <div class="wrapper-inner">
+          {% include 'includes/header.html' %}
+        </div>
+      </div>
+      <div class="content">
+        {% block content %}{% endblock %}
+      </div>
+      <div class="full-width">
+        <div class="wrapper-inner">
+          {% include 'includes/footer.html' %}
+        </div>
+      </div>
+    </div>
+    {% block script %}
+      <script src="{{ url_for('static', filename='js/header.js') }}"></script>
+    {% endblock %}
+
+    <script>
+      if ('serviceWorker' in navigator) {
+          navigator.serviceWorker.register("/static/sw.js").then(function(registration) {
+            console.log('ServiceWorker registration successful with scope: ', registration.scope);
+          }, function(err) {
+            console.log('ServiceWorker registration failed: ', err);
+          });
+        }
+    </script>
+  </body>
+</html>
