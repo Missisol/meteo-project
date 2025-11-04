@@ -6,26 +6,26 @@
 
 ---
 
-### Настройка проекта
+### Настройка проекта[^1]
 - Создание виртуальной среды - `python3 -m venv <env name>`
 - Активация витруальной среды - `source <env name>/bin/activate`
 - Установка зависимостей - `pip install -r requirements.txt`
 - Если файервол (UFW) включен, должен быть открыт доступ к портам, на которых будет открываться проект, и к порту 1883
 
 #### Mosquitto MQTT Broker
-- Mожно использовать Mosquitto Brocker, установленный на Raspberry Pi:    
+- Mожно использовать Mosquitto Brocker, установленный на Raspberry Pi[^2][^3]:    
     - установка Mosquitto Broker на Raspberry Pi
     `sudo apt install -y mosquitto mosquitto-clients`
     - настройка автоматического запуска Mosquitto Broker при загрузке RPI - `sudo systemctl enable mosquitto.service`
     - для удаленного доступа без аутентификации в конфигурационный файл /etc/mosquitto/mosquitto.conf добавить:
         `allow_anonymous true`  
         `listener 1883 0.0.0.0`  
-    - Можно использовать Mosquitto Brocker в докер-контейнере:
+    - Можно использовать Mosquitto Brocker в докер-контейнере[^4]:
     - создать файл mosquitto.conf в домашней директории
     - запустить Mosquitto Broker в контейнере  - `docker run -d --restart always --name <name> -p 1883:1883 -v $HOME/mosquitto.conf:/mosquitto/config/mosquitto.conf eclipse-mosquitto:2`
 
-#### Расписание задач с Cron
-- Настройка расписания выполнения задач с использованием Cron 
+#### Расписание задач с Cron[^6]
+- Настройка расписания выполнения задач с использованием Cron[^7][^8] 
     - `crontab -e`
     - `* * * * * cd <path_to_project_directory> && <env name>/bin/flask <command_name>`
 - когда проект запущен, в терминале запускаем команду - `(.venv) $  flask --help`. В разделе Commands видим команду (в данном проекте - `scheduled Cron job`)
@@ -37,7 +37,7 @@
 #### Разработка
 - Запуск проекта в dev режиме - `flask run --host=0.0.0.0`
 
-#### Деплой
+#### Деплой[^5]
 - установить supervisor - `sudo apt install supervisor`
 - создать файл конфигурации supervisor /etc/supervisor/conf.d/meteo.conf  
 `[program:meteo]`  
@@ -62,15 +62,14 @@
 - `flask db downgrade base` - when the downgrade command is not given a target, it downgrades one revision. The base target causes all migrations to be downgraded, until the database is left at its initial state, with no tables.
 - Create requirements file - `pip freeze > requirements.txt`
 
----
 
-#### Ссылки
-- [Flask Mega-Tutorial](https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-i-hello-world)
-- [ESP8266 Publishing DHT22 Readings with MQTT to Raspberry Pi](https://randomnerdtutorials.com/esp8266-publishing-dht22-readings-with-mqtt-to-raspberry-pi/)
-- [Mosquitto Brocker settings](https://randomnerdtutorials.com/how-to-install-mosquitto-broker-on-raspberry-pi/)
-- [How to Configure Mosquitto MQTT Broker in Docker](https://cedalo.com/blog/mosquitto-docker-configuration-ultimate-guide/)
-- [Setting Up Gunicorn and Supervisor](https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-xvii-deployment-on-linux)
-- [Flask regularly scheduled jobs with Cron](https://blog.miguelgrinberg.com/post/run-your-flask-regularly-scheduled-jobs-with-cron)
-- [crontab guru](https://crontab.guru/)
--  cron need not be restarted whenever a crontab file is modified - [man cron](https://www.manpagez.com/man/8/cron/), but `sudo service cron reload`
+
+[^1]: [Flask Mega-Tutorial](https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-i-hello-world)
+[^2]: [ESP8266 Publishing DHT22 Readings with MQTT to Raspberry Pi](https://randomnerdtutorials.com/esp8266-publishing-dht22-readings-with-mqtt-to-raspberry-pi/)
+[^3]: [Mosquitto Brocker settings](https://randomnerdtutorials.com/how-to-install-mosquitto-broker-on-raspberry-pi/)
+[^4]: [How to Configure Mosquitto MQTT Broker in Docker](https://cedalo.com/blog/mosquitto-docker-configuration-ultimate-guide/)
+[^5]: [Setting Up Gunicorn and Supervisor](https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-xvii-deployment-on-linux)
+[^6]: [Flask regularly scheduled jobs with Cron](https://blog.miguelgrinberg.com/post/run-your-flask-regularly-scheduled-jobs-with-cron)
+[^7]: [crontab guru](https://crontab.guru/)
+[^8]:  cron need not be restarted whenever a crontab file is modified - [man cron](https://www.manpagez.com/man/8/cron/), but `sudo service cron reload`
 
