@@ -1,6 +1,6 @@
 ## Регистрация метеоданных (температура, влажность, давление) от датчиков DHT22 и BME280 с использованием ESP8266 и Raspberry Pi
 
-***[Project on Github](https://github.com/Missisol/meteoProject/tree/develop)***
+***[Project on Github](https://github.com/Missisol/meteo-project)***
 
 ***[Sketches on Github](https://github.com/Missisol/ESP8266_BME280_DHT22_project)*** - скетчи для ESP8266 с BME280 и DHT22
 
