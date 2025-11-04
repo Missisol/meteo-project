@@ -1,0 +1,19 @@
+{% macro get_item(title, link, prefix, box_list) %}
+<section class="section section-sensor">
+    {% include 'includes/box_link.html' %}
+    <div class="wrapper box-wrapper">
+        {% for el in box_list %}
+        <div class="box">
+          <svg aria-hidden="true" width="30" height="30">
+            <use xlink:href="#{{ el.data }}-icon" class="sensor-icon--{{ el.data }}" />
+          </svg>
+          <div class="box__content">
+            <div class="box__title">{{ el.dataName|safe }}</div>
+            <div class="box__data box__data--{{ el.data }}" id="{{ prefix }}-{{ el.data}}"></div>
+          </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endmacro %}
+

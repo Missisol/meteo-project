@@ -1,0 +1,13 @@
+<section aria-label="Color scheme switcher" class="theme-switcher">
+    {% for item in theme_switcher %}
+        <button aria-pressed="{{ item.pressed }}" value="{{ item.value }}" class="theme-switcher__button">
+            {% if item.icon %}
+            <svg aria-hidden="true" width="16" height="16">
+                <use xlink:href="#{{ item.icon }}-icon" />
+              </svg>
+            {% else %}
+                {{ item.text }}
+            {% endif %}
+        </button>
+    {% endfor %}
+</section>

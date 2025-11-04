@@ -1,0 +1,2 @@
+FLASK_APP=meteo.py
+FLASK_DEBUG=0

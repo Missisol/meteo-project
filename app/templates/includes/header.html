@@ -1,0 +1,35 @@
+{% include 'icons/icons_theme_switcher.html' %}
+<header class="header">
+    <a href="{{ url_for('main.index') }}" class="header__logo">
+        <img src="{{ url_for('static', filename='icons/logo.svg') }}" alt="logo">
+    </a>
+    <nav class="nav" aria-label="Main menu">
+        <ul class="nav__items">
+            {% for item in menu %}
+            <li class="nav__item" data-url="{{ item.url }}">
+                {% if item.nested and not item.url %}
+                <button 
+                    type="button"
+                    class="nav__button"
+                    aria-expanded="false"
+                    aria-controls="menu-dropdown"
+                >
+                    {{ item.text }}
+                </button>
+                <ul class="nested" id="menu-dropdown">
+                    {% for i in item.nested %}
+                    <li class="nav__item" data-url="{{ i.url }}">
+                        <a href="{{ url_for(i.url) }}">{{ i.text }}</a>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% elif item.url %}
+                <a href="{{ url_for(item.url) }}">{{ item.text }}</a>
+                {% endif %}
+            </li>
+            {% endfor %}
+        </ul>
+    </nav>
+    {% include 'includes/theme_switcher.html' %}
+</header>
+

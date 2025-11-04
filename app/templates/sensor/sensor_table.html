@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block head %}
+  {{ super() }}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/table.css')}}" />
+{% endblock %}
+
+{% block content %}
+    <h1 class="table-title">{{ title }}</h1>
+    <div class="table-wrapper">
+        <table class="table">
+            <caption class="table__caption">
+                <nav class="table__nav nav__desktop">
+                    {% include 'includes/table_nav.html' %}
+                </nav>
+            </caption>
+            <thead>
+                <tr>
+                    {% for item in table.th %}
+                        <th class="table__cell">
+                            <span class="cell-th">{{ item|safe }}</span>
+                        </th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody class="table__body">
+                {% if data %}
+                    {% for d in data %}
+                        <tr>
+                            {% for item in table.td %}
+                                {% if item == 'created_at' %}
+                                    <td class="table__cell">
+                                        <span>{{ d[item]|datetimeformat }}</span>
+                                    </td>
+                                {%  elif item == 'date' %}
+                                    <td class="table__cell">
+                                        <span>{{ d[item]|dateformat }}</span>
+                                    </td>
+                                {%  elif 'time' in item  %}
+                                    <td class="table__cell">
+                                        <span class="data">{{ d[item]|time }}</span>
+                                    </td>
+                                {% else %}
+                                    <td class="table__cell">
+                                        <span class="data">{{ d[item] }}</span>
+                                    </td>   
+                                {% endif %}         
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <nav class="table__nav nav__mobile">
+            {% include 'includes/table_nav.html' %}
+        </nav>
+    {% else %}
+        <p>No data</p>
+    {% endif %}
+{% endblock %}

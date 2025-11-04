@@ -1,0 +1,33 @@
+<section class="section section-form">
+  <button
+    type="button"
+    class="button-toggle"
+    aria-expanded="false"
+    aria-controls="history-form"
+  >
+    <h3 class="form-title">Изменить период графиков</h3>
+  </button>
+  <form id="history-form" class="form" name="history-form" novalidate>
+    <div class="calendar-wrapper">
+      <p class="input-wrapper">
+        <label for="start-date" class="form__label">Начало периода</label>
+        <input type="date" id="start-date" name="start_date" required class="input">
+      </p>
+      <button type="button" id="button-change" class="button button-change">
+        <svg aria-hidden="true" width="24" height="24" class="svg-change">
+          <use xlink:href="#change-icon"></use>
+        </svg>
+      </button>
+      <p class="input-wrapper">
+        <label for="end-date" class="form__label">Конец периода</label>
+        <input type="date" id="end-date" name="end_date" required class="input">
+      </p>
+    </div>
+    <div class="buttons">
+      {% for button in form_buttons %}
+        <input type="{{ button.type }}" id="{{ button.id }}" value="{{ button.value }}" class="{{ button.class }}">
+      {% endfor %}
+    </div>
+    <span id="form-error" class="form__error"></span>
+  </form>
+</section>

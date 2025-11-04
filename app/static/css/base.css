@@ -1,0 +1,187 @@
+:root { 
+  interpolate-size: allow-keywords;
+   
+  /* color-scheme: light dark; */
+  --base-color: light-dark(#fff, #191919);
+  --accent-color: light-dark(#ececec, #212020);
+  --accent-table-color: light-dark(#ececec, #292828);
+  --base-grey-color: light-dark(#595959, #b2b0b0);
+  --medium-grey-color: light-dark(#808080, #808080);
+  --light-grey-color: light-dark(#cecece, #cecece);
+  --base-blue-color: light-dark(#047df3, #3392f1);
+  --medium-blue-color: light-dark(#70b0ef, #70b0ef);
+  --light-blue-color: light-dark(#a6cdf3, #a6cdf3);
+  --base-green-color: light-dark(#3ba639, #3ba639);
+  --light-green-color: light-dark(#aaffa9, #aaffa9);
+  --base-red-color: light-dark(#ff0000, #ff0000);
+  --light-red-color: light-dark(#ef7985, #ef7985);
+  --base-magenta-color: light-dark(#cc66ff, #cc66ff);
+  --c-text: light-dark(#a6cdf3, #047df3);
+
+  --gap: 2px;
+  --gap2: calc(var(--gap) * 2); /* 4px */
+  --gap3: calc(var(--gap) * 3); /* 6px */
+  --gap4: calc(var(--gap) * 4); /* 8px */
+  --gap5: calc(var(--gap) * 5); /* 10px */
+  --gap6: calc(var(--gap) * 6); /* 12px */
+  --gap8: calc(var(--gap) * 8); /* 16px */
+  --gap16: calc(var(--gap) * 16); /* 32px */
+  --gap32: calc(var(--gap) * 32); /* 64px */
+
+
+  --container-width: 1300px;
+}
+
+*, 
+*::before, 
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -moz-text-size-adjust: none;
+  -webkit-text-size-adjust: none;
+  text-size-adjust: none;
+}
+
+body, h1, h2, h3, h4, p {
+  margin: 0;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  line-height: 1.5;
+  font-family: system-ui, sans-serif;
+  background: var(--base-color);
+  color: var(--base-grey-color);
+}
+
+ul,
+ol {
+  list-style: none;
+  padding: 0;
+}
+
+h1, h2,
+h3, h4 {
+  text-wrap: balance;
+}
+
+img, picture, svg {
+  display: block;
+  max-width: 100%;
+}
+
+input, button, textarea, select {
+  font: inherit;
+}
+
+p, h1, h2, h3, h4 {
+  overflow-wrap: break-word;
+}
+
+a:not([class]) {
+  text-decoration-skip-ink: auto;
+  color: currentColor;
+}
+
+/* :root,
+:root[data-force-color-mode='light'] {
+  color-scheme: light dark; 
+
+  --base-color: #fff;
+  --accent-color: #ececec;
+  --base-grey-color: #595959;
+  --medium-grey-color: #808080;
+  --light-grey-color: #cecece;
+  --base-blue-color: #047df3;
+  --medium-blue-color: #70b0ef;
+  --light-blue-color: #a6cdf3;
+  --base-green-color: #3ba639;
+  --light-green-color: #aaffa9;
+  --base-red-color: #ff0000;
+  --light-red-color: #ef7985;
+  --base-magenta-color: #cc66ff;
+
+  --gap: 2px;
+  --gap2: calc(var(--gap) * 2);
+  --gap3: calc(var(--gap) * 3);
+  --gap4: calc(var(--gap) * 4);
+  --gap5: calc(var(--gap) * 5);
+  --gap6: calc(var(--gap) * 6);
+  --gap8: calc(var(--gap) * 8);
+  --gap16: calc(var(--gap) * 16);
+  --gap32: calc(var(--gap) * 32);
+
+  --helper-font-size: 14px;
+} */
+
+
+/* @media (prefers-color-scheme: dark) {
+  :root {
+    --base-color: #191919;
+    --accent-color: #212020;
+    --base-grey-color: #b2b0b0;
+    --medium-grey-color: #808080;
+    --light-grey-color: #cecece;
+    --base-blue-color: #3392f1;
+    --medium-blue-color: #70b0ef;
+    --light-blue-color: #a6cdf3;
+    --base-green-color: #3ba639;
+    --light-green-color: #aaffa9;
+    --base-red-color: #ff0000;
+    --light-red-color: #ef7985;
+    --base-magenta-color: #cc66ff;
+  }
+}
+
+:root[data-force-color-mode='dark'] {
+  --accent-color: #212020;
+  --base-color: #191919;
+  --base-grey-color: #b2b0b0;
+  --medium-grey-color: #808080;
+  --light-grey-color: #cecece;
+  --base-blue-color: #3392f1;
+  --medium-blue-color: #70b0ef;
+  --light-blue-color: #a6cdf3;
+  --base-green-color: #3ba639;
+  --light-green-color: #aaffa9;
+  --base-red-color: #ff0000;
+  --light-red-color: #ef7985;
+  --base-magenta-color: #cc66ff;
+} */
+
+.container {
+  min-height: 100%;
+  display: grid;
+  grid-template-columns:
+    [full-start] 1fr [container-start] minmax(0, var(--container-width)) [container-end] 1fr [full-end];
+  grid-template-rows: auto 1fr auto;
+  gap: var(--gap8);
+}
+
+.container > * {
+  grid-column: container;
+}
+
+.container > .full-width {
+  grid-column: full;
+}
+
+.full-width {
+  background: var(--accent-color);
+}
+
+.wrapper-inner {
+  display: grid;
+  grid-template-columns:
+    1fr [container-start] minmax(0, var(--container-width)) [container-end] 1fr;
+  column-gap: var(--gap8);
+}
+
+.wrapper-inner > * {
+  grid-column: container;
+}
