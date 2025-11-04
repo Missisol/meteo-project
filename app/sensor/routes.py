@@ -1,4 +1,4 @@
-from datetime import datetime, date
+from datetime import datetime, date, timezone
 from flask import render_template, request, url_for, current_app, jsonify
 from app import db
 import sqlalchemy as sa
@@ -153,7 +153,7 @@ def get_bme280_latest_data():
                 'temperature': '-',
                 'humidity': '-',
                 'pressure': '-',
-                'created_at': datetime.now(),
+                'created_at': datetime.now(timezone.utc),
             }
         )
 
@@ -206,7 +206,7 @@ def get_dht22_latest_data():
                 'humidity1': '-',
                 'temperature2': '-',
                 'humidity2': '-',
-                'created_at': datetime.now(),
+                'created_at': datetime.now(timezone.utc),
             }
         )
 
