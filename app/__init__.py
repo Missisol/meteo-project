@@ -87,26 +87,47 @@ def create_app(config_class=Config):
                 'created_at': datetime.now(timezone.utc)
             }
 
-            # Only save to DB if some minutes have passed since last save
+            # Save once per hour at the top of each hour (e.g., 1:00 PM, 2:00 PM, etc.)
             now = datetime.now()
-            should_save = False
-            
-            if app.last_bme280_save is None:
-                should_save = True
-            else:
-                time_since_last_save = now - app.last_bme280_save
-                if time_since_last_save >= timedelta(minutes=app.config['SAVE_INTERVAL']):
-                    should_save = True
+            today = now.date()
+            # Calculate the current hour slot (e.g., 1:00 PM if current time is 1:23 PM)
+            current_hour_slot = datetime.combine(today, datetime.min.time()).replace(hour=now.hour)
+
+            should_save = now >= current_hour_slot and (
+                app.last_bme280_save is None or app.last_bme280_save < current_hour_slot
+            )
 
             if should_save and temperature_val < 100 and humidity_val != 100 and pressure_val > 0 and pressure_val < 800:
-                mod = models.Bme280Outer(temperature=app.latest_bme280_data['temperature'], humidity=app.latest_bme280_data['humidity'], pressure=app.latest_bme280_data['pressure'], created_at=app.latest_bme280_data['created_at'])
+                mod = models.Bme280Outer(temperature=temperature_val, humidity=humidity_val, pressure=pressure_val)
                 save_on_db(mod)
                 app.last_bme280_save = now
-                print(f"BME280 data saved to DB at {now}")
+                print(f"BME280 data saved to DB at {now} for hour slot starting {current_hour_slot}")
             elif should_save:
                 print('Sensor data error for saving')
             else:
-                print(f"BME280 data received but not saved (last save: {app.last_bme280_save})")
+                print(f"BME280 data received but not saved (last save: {app.last_bme280_save}, current hour slot: {current_hour_slot})")
+
+            # Вариант с установкой произвольного интервала времени между сохранениями в базе
+            # Only save to DB if some minutes have passed since last save
+            # now = datetime.now()
+            # should_save = False
+            
+            # if app.last_bme280_save is None:
+            #     should_save = True
+            # else:
+            #     time_since_last_save = now - app.last_bme280_save
+            #     if time_since_last_save >= timedelta(minutes=app.config['SAVE_INTERVAL']):
+            #         should_save = True
+
+            # if should_save and temperature_val < 100 and humidity_val != 100 and pressure_val > 0 and pressure_val < 800:
+            #     mod = models.Bme280Outer(temperature=app.latest_bme280_data['temperature'], humidity=app.latest_bme280_data['humidity'], pressure=app.latest_bme280_data['pressure'], created_at=app.latest_bme280_data['created_at'])
+            #     save_on_db(mod)
+            #     app.last_bme280_save = now
+            #     print(f"BME280 data saved to DB at {now}")
+            # elif should_save:
+            #     print('Sensor data error for saving')
+            # else:
+            #     print(f"BME280 data received but not saved (last save: {app.last_bme280_save})")
 
 
     def on_message_from_dht22(client, userdata, message):
@@ -130,11 +151,11 @@ def create_app(config_class=Config):
                 'created_at': datetime.now(timezone.utc)
             }
 
-            # Save only twice a day: at 04:00 and 16:00 (first message after those times)
+            # Save only twice a day: at 03:00 and 15:00 (first message after those times)
             now = datetime.now()
             today = now.date()
-            slot_morning = datetime.combine(today, datetime.min.time()).replace(hour=4)
-            slot_evening = datetime.combine(today, datetime.min.time()).replace(hour=16)
+            slot_morning = datetime.combine(today, datetime.min.time()).replace(hour=3)
+            slot_evening = datetime.combine(today, datetime.min.time()).replace(hour=15)
 
             if now >= slot_evening:
                 current_slot = slot_evening

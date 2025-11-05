@@ -38,6 +38,7 @@ nosetests.xml
 venv
 .venv
 app.db
+meteo.db
 meteo.log*
 
 .env
