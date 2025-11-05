@@ -2,7 +2,7 @@
 /* https://pepelsbey.dev/articles/native-light-dark/  */
 
 .header {
-    padding: var(--gap8) 0;
+    padding: var(--gap2) 0;
     display: grid;
     grid-template-columns: [logo-start] auto [logo-end menu-start] 1fr [menu-end switch-start] auto [switch-end];
     grid-template-rows: [top-start] auto [top-end bottom-start] 1fr [bottom-end];
@@ -15,8 +15,8 @@
 
   .header__logo {
     display: inline-block;
-    width: 30px;
-    min-width: 30px;
+    width: 60px;
+    /* min-width: 60px; */
     align-self: center;
     grid-column: logo;
     grid-row: top;
