@@ -10,6 +10,7 @@
 
     @media (width < 700px) {
       row-gap: var(--gap8);
+      padding-block-end: var(--gap8);
     }
   }
 
