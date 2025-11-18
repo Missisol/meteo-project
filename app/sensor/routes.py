@@ -1,4 +1,4 @@
-from datetime import datetime, date, timezone
+from datetime import datetime, date, timezone, timedelta
 from flask import render_template, request, url_for, current_app, jsonify
 from app import db
 import sqlalchemy as sa
@@ -97,9 +97,11 @@ def json_history():
     print(f'params: {start} and {end}')
 
     if start and end:
-        print('start', date.fromisoformat(start))
-        print('end', date.fromisoformat(end))
-        query = sa.select(BmeHistory).filter(BmeHistory.date >= date.fromisoformat(start), BmeHistory.date <= date.fromisoformat(end)).order_by(BmeHistory.date.desc())
+        start_date = date.fromisoformat(start)
+        end_date = date.fromisoformat(end) + timedelta(days=1)
+        print('start', start_date)
+        print('end', end_date)
+        query = sa.select(BmeHistory).filter(BmeHistory.date >= start_date, BmeHistory.date <= end_date).order_by(BmeHistory.date.desc())
     else:
         query = sa.select(BmeHistory).order_by(BmeHistory.date.desc()).limit(current_app.config['HISTORY_ITEMS_LIMIT'])
     data = db.session.scalars(query)
