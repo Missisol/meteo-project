@@ -2,6 +2,7 @@ import ast
 import logging
 from logging.handlers import RotatingFileHandler
 import os
+import requests
 from datetime import datetime, timedelta, timezone
 from flask import Flask, request, current_app
 from config import Config
@@ -102,6 +103,9 @@ def create_app(config_class=Config):
                 save_on_db(mod)
                 app.last_bme280_save = now
                 print(f"BME280 data saved to DB at {now} for hour slot starting {current_hour_slot}")
+
+                send_to_telegram(f'Данные на: {datetime.now().strftime("%d.%m.%Y, %H:%M")}, Температура: {temperature_val}, Влажность: {humidity_val}, Давление: {pressure_val}')
+
             elif should_save:
                 print('Sensor data error for saving')
             else:
@@ -181,6 +185,14 @@ def create_app(config_class=Config):
         with app.app_context():
             db.session.add(data)
             db.session.commit()
+
+    
+    def send_to_telegram(text):
+        bot_token = app.config['BOT_TOKEN']
+        chat_id = app.config['CHAT_ID']
+        url = f'https://api.telegram.org/bot{bot_token}/sendMessage'
+        data = {'chat_id': chat_id, 'text': text}
+        requests.post(url, data=data)
 
 
     mqttc = connect_mqtt()
