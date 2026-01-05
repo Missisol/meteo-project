@@ -2,21 +2,22 @@
 /* https://pepelsbey.dev/articles/native-light-dark/  */
 
 .header {
-    padding: var(--gap8) 0;
+    padding-block: var(--gap4);
     display: grid;
     grid-template-columns: [logo-start] auto [logo-end menu-start] 1fr [menu-end switch-start] auto [switch-end];
     grid-template-rows: [top-start] auto [top-end bottom-start] 1fr [bottom-end];
-    align-items: end;
+    align-items: center;
 
     @media (width < 700px) {
       row-gap: var(--gap8);
+      padding-block-end: var(--gap8);
     }
   }
 
   .header__logo {
     display: inline-block;
-    width: 30px;
-    min-width: 30px;
+    width: 60px;
+    /* min-width: 60px; */
     align-self: center;
     grid-column: logo;
     grid-row: top;
@@ -40,11 +41,11 @@
     column-gap: var(--gap16);
     margin: 0;
 
-    & > li {
+    /* & > li {
       & > a, .nav__button {
         padding-bottom: var(--gap4);
       }
-    }
+    } */
   }
 
   .nav__item {

@@ -9,6 +9,7 @@
     <h1 class="table-title">{{ title }}</h1>
     <div class="table-wrapper">
         <table class="table">
+        {% if data %}
             <caption class="table__caption">
                 <nav class="table__nav nav__desktop">
                     {% include 'includes/table_nav.html' %}
@@ -24,7 +25,6 @@
                 </tr>
             </thead>
             <tbody class="table__body">
-                {% if data %}
                     {% for d in data %}
                         <tr>
                             {% for item in table.td %}
@@ -49,12 +49,12 @@
                         </tr>
                     {% endfor %}
                 </tbody>
+        {% else %}
+            <p>Нет данных</p>
+        {% endif %}
             </table>
         </div>
         <nav class="table__nav nav__mobile">
             {% include 'includes/table_nav.html' %}
         </nav>
-    {% else %}
-        <p>No data</p>
-    {% endif %}
 {% endblock %}

@@ -67,7 +67,7 @@ async function checkContent() {
     if (bmeT && !bmeT.innerText) {
         const res = await getSensorData('/api/bme280_mqtt', 'bme', postfixBme)
         if (!res.created_at) {
-             getSensorData('/api/bme280_db', 'bme', postfixDht)
+             getSensorData('/api/bme280_db', 'bme', postfixBme)
         }
     } 
 }

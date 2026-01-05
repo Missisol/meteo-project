@@ -35,7 +35,19 @@
 
 ### Запуск проекта
 #### Разработка
-- Запуск проекта в dev режиме - `flask run --host=0.0.0.0`
+- Запуск проекта в development режиме:
+```
+export APP_ENV=development
+flask run --host=0.0.0.0 -p 5002
+```
+или bash скриптом  `./dev.sh`
+
+- Запуск проекта в production режиме:
+```
+export APP_ENV=production
+gunicorn -k gevent -b 0.0.0.0:5000 meteo:app
+```
+или bash скриптом  `./boot.sh`
 
 #### Деплой[^5]
 - установить supervisor - `sudo apt install supervisor`

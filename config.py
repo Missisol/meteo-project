@@ -17,4 +17,9 @@ class Config:
     MQTT_TOPIC_DHT22 = os.environ.get('MQTT_TOPIC_DHT22')
     DAYS_RANGE = 11
     SAVE_INTERVAL = 60
+    BOT_TOKEN = os.environ.get('BOT_TOKEN')
+    CHAT_ID = os.environ.get('CHAT_ID')
+    APP_ENV = os.environ.get('APP_ENV')
+
+
 
