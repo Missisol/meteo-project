@@ -104,7 +104,10 @@ def create_app(config_class=Config):
                 app.last_bme280_save = now
                 print(f"BME280 data saved to DB at {now} for hour slot starting {current_hour_slot}")
 
-                send_to_telegram(f'Данные на: {datetime.now().strftime("%d.%m.%Y, %H:%M")}, Температура: {temperature_val}, Влажность: {humidity_val}, Давление: {pressure_val}')
+                try:
+                    send_to_telegram(f'Данные на: {datetime.now().strftime("%d.%m.%Y, %H:%M")}, Температура: {temperature_val}, Влажность: {humidity_val}, Давление: {pressure_val}')
+                except Exception as e:
+                    app.logger.error(f"Failed to send Telegram message: {e}")
 
             elif should_save:
                 print('Sensor data error for saving')
@@ -192,7 +195,11 @@ def create_app(config_class=Config):
         chat_id = app.config['CHAT_ID']
         url = f'https://api.telegram.org/bot{bot_token}/sendMessage'
         data = {'chat_id': chat_id, 'text': text}
-        requests.post(url, data=data)
+        try:
+            response = requests.post(url, data=data)
+            response.raise_for_status()
+        except requests.exceptions.RequestException as e:
+            app.logger.error(f"Failed to send message to Telegram: {e}")
 
 
     mqttc = connect_mqtt()
