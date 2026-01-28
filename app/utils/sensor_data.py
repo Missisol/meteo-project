@@ -33,17 +33,6 @@ prefix_list = ['rpi', 'bme', 'dht1', 'dht2']
 sensors_list = ['rpi', 'dht1', 'dht2']
 weather_list = ['bme']
 
-main_menu = [
-    { 'url': 'main.index', 'text': 'Датчик погоды'},   
-    { 'url': 'sensor.sensors', 'text': 'Датчики в доме'},   
-    { 'text': 'Таблицы', 'nested': [
-        { 'url': 'sensor.bme_history', 'text': 'BME280 история'},
-        { 'url': 'sensor.bme280_outer', 'text': 'BME280 внешний'},   
-        { 'url': 'sensor.dht22_outer', 'text': 'DHT22 внешние'},   
-        # { 'url': 'sensor.bme280_rpi', 'text': 'BME280 RPI'},   
-    ]},   
-]
-
 bme_rpi_table = {
     # 'th': ['id', 'created at (utc)', 'temperature', 'humidity', 'pressure'],
     # 'td': ['id', 'created_at', 'temperature', 'humidity', 'pressure']
@@ -100,14 +89,3 @@ history_table = {
         'max_pressure_time',
       ]
 }
-
-theme_switcher = [
-    { 'value': 'light', 'pressed': 'false', 'icon': 'sun' },
-    { 'value': 'light dark', 'pressed': 'false', 'text': 'Авто' },
-    { 'value': 'dark', 'pressed': 'false', 'icon': 'moon' },
-]
-
-form_buttons = [
-    { 'type': 'submit', 'id': 'button-submit', 'value': 'Задать период', 'class': 'button' },
-    { 'type': 'reset', 'id': 'button-reset', 'value': 'Очистить', 'class': 'button' },
-]
