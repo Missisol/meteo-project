@@ -74,6 +74,11 @@ gunicorn -k gevent -b 0.0.0.0:5000 meteo:app
 - `flask db downgrade base` - when the downgrade command is not given a target, it downgrades one revision. The base target causes all migrations to be downgraded, until the database is left at its initial state, with no tables.
 - Create requirements file - `pip freeze > requirements.txt`
 
+___
+
+## Troubleshootings
+- ERROR [flask_migrate] Error: Can't locate revision identified by 'xxx...': `flask db revision --rev-id xxx...`
+
 
 
 [^1]: [Flask Mega-Tutorial](https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-i-hello-world)
