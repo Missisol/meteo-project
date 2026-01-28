@@ -1,0 +1,14 @@
+{% macro get_charts(title, link, form_buttons) %}
+    <section class="section section-charts">
+        {% include 'includes/box_link.html' %}
+        {% include 'sensor/history_modal.html' %}
+        <div class="controls">
+            <button type="button" class="button button--blue" id="history-button">Изменить период графиков</button>
+            <button type="reset" form="history-form" class="button button--invert">Сбросить фильтр</button>
+        </div>
+        <div id="chartT" class="chart-wrapper"></div>
+        <div id="chartH" class="chart-wrapper"></div>
+        <div id="chartP" class="chart-wrapper"></div>
+    </section>
+{% endmacro %}
+

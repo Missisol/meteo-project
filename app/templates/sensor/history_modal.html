@@ -1,0 +1,28 @@
+<dialog id="history-dialog" class="dialog-modal" aria-labelledby="history-dialog__title" closedby="any">
+  {% with title='Изменить период', commandfor='history-dialog' %}
+    {% include 'includes/form_heading.html' %}
+  {% endwith %}
+  <form id="history-form" class="form filter-form" name="history-form" novalidate>
+    <div class="calendar-wrapper">
+      <div class="input-wrapper">
+        <label for="start-date" class="form__label">Начало периода</label>
+        <input type="date" id="start-date" name="start_date" required class="input">
+      </div>
+      <button type="button" id="button-change" class="button button-change">
+        <svg aria-hidden="true" width="24" height="24" class="svg-change">
+          <use xlink:href="#change-icon"></use>
+        </svg>
+      </button>
+      <div class="input-wrapper">
+        <label for="end-date" class="form__label">Конец периода</label>
+        <input type="date" id="end-date" name="end_date" required class="input">
+      </div>
+    </div>
+    <div class="buttons">
+      {% for button in form_buttons %}
+        <button type="{{ button.type }}" id="{{ button.id }}" value="{{ button.value }}" class="{{ button.class }}">{{ button.value }}</button>
+      {% endfor %}
+    </div>
+    <span id="form-error" class="form__error"></span>
+  </form>
+</dialog>
