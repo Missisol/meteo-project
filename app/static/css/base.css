@@ -14,6 +14,7 @@
   --base-green-color: light-dark(#3ba639, #3ba639);
   --light-green-color: light-dark(#aaffa9, #aaffa9);
   --base-red-color: light-dark(#ff0000, #ff0000);
+  --medium-red-color: light-dark(hsl(0 66% 46% / 0.905), hsl(0 66% 46% / 0.905));
   --light-red-color: light-dark(#ef7985, #ef7985);
   --base-magenta-color: light-dark(#cc66ff, #cc66ff);
   --c-text: light-dark(#a6cdf3, #047df3);
@@ -25,9 +26,9 @@
   --gap5: calc(var(--gap) * 5); /* 10px */
   --gap6: calc(var(--gap) * 6); /* 12px */
   --gap8: calc(var(--gap) * 8); /* 16px */
+  --gap10: calc(var(--gap) * 10); /* 20px */
   --gap16: calc(var(--gap) * 16); /* 32px */
   --gap32: calc(var(--gap) * 32); /* 64px */
-
 
   --container-width: 1300px;
 }
