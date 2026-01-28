@@ -1,0 +1,29 @@
+<dialog id="edit-dialog" class="dialog-modal">
+    {% with title='Редактировать наблюдение', commandfor='edit-dialog' %}
+        {% include 'includes/form_heading.html' %}
+    {% endwith %}
+    <form id="edit-form" method="post" action="{{ url_for('observations.update_observation')}}">
+        {{ edit_form.hidden_tag() }}
+        <div class="form-group">
+            <p>Дата</p>
+            <p id="created-at" name="created_at"></p>
+        </div>
+        <div class="form-group">
+            {{ edit_form.cloudiness.label() }}
+            {{ edit_form.cloudiness(id="cloudiness", class="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ edit_form.precipitation.label() }}
+            {{ edit_form.precipitation(id="precipitation", class="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ edit_form.precipitation_rate.label() }}
+            {{ edit_form.precipitation_rate(id="precipitation-rate", class="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ edit_form.snow_depth.label() }}
+            {{ edit_form.snow_depth(id="snow-depth", class="form-control") }}
+        </div>
+        {{ edit_form.submit(class="button button--blue") }}
+    </form>
+</dialog>

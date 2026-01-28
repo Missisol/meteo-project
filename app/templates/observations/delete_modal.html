@@ -1,0 +1,12 @@
+  <dialog id="delete-dialog" class="delete-dialog dialog">
+    <div class="dialog__wrapper">
+        <p>Вы уверены, что хотите удалить наблюдение?</p>
+        <div class="dialog__button-box">
+            <form id="delete-form" method="post">
+                {{ empty_form.hidden_tag() }}
+                {{ empty_form.submit(class="button button--icon-red") }}
+            </form>
+            <button type="button" id="delete-close" class="button button--blue close-dialog">Отменить</button>
+        </div>
+    </div>
+  </dialog>
