@@ -2,14 +2,14 @@
 
 import { getMaxDateForCalehdar } from "./helpers.js"
 
-const formSection = document.querySelector('.section-form')
 const formEl = document.querySelector('#history-form')
-const buttonResetEl = document.querySelector('#button-reset')
 const startInput = document.querySelector('#start-date')
 const endInput = document.querySelector('#end-date')
 const errorSpan = document.querySelector('#form-error')
 const buttonChangeEl = document.querySelector('#button-change')
-const buttonToggleEl = document.querySelector('.button-toggle')
+const historyDialog = document.querySelector('#history-dialog')
+const buttonHistory = document.querySelector('#history-button')
+const resetHistoryButtons = document.querySelectorAll('button[type=reset]')
 
 const params = [
   ['#chartT', 'temperature', 'температура', ['#1d531c', '#3ba639']],
@@ -20,6 +20,10 @@ const charts = []
 
 let newStart
 let newEnd
+
+buttonHistory.addEventListener('click', () => {
+  historyDialog.showModal()
+})
 
 buttonToggleEl.addEventListener('click', (e) => {
   if (formSection.classList.contains('open')) {
@@ -57,6 +61,7 @@ function initForm() {
         if (res?.params) {
           getHistoryData(res.params)
           charts.forEach(chart => chart.updateSeries())
+          historyDialog.close()
         }
         if (res?.error) {
           newStart = formEl.end_date.value
@@ -70,20 +75,22 @@ function initForm() {
     if (formEl.start_date.value && formEl.end_date.value) {
       newStart = formEl.end_date.value
       newEnd = formEl.start_date.value
-  
+
       formEl.end_date.value = newEnd
       formEl.start_date.value = newStart
       errorSpan.textContent = ''
     }
-})
+  })
 
-  buttonResetEl.addEventListener('click', () => {
-    if (formEl.start_date.value || formEl.end_date.value) {
-      getHistoryData()
-    }
+  resetHistoryButtons.forEach((button) => {
+    button.addEventListener('click', () => {
+      if (formEl.start_date.value || formEl.end_date.value) {
+        getHistoryData()
+        historyDialog.close()
+      }  
+    })
   })
 }
-
 
 async function getHistoryData(params) {
   const url = params ? `/api/json_history?${params}` : '/api/json_history'

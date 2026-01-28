@@ -8,6 +8,11 @@ const switchButtons = document.querySelectorAll('.theme-switcher__button');
 const nested = document.querySelector('#menu-dropdown')
 const navButton = document.querySelector('.nav__button')
 
+const menuToggle = document.querySelector('.menu-toggle');
+const menuClose = document.querySelector('.menu-close');
+const mobileMenu = document.querySelector('#mobile-menu');
+const mobileMenuOverlay = document.querySelector('.mobile-menu-overlay');
+
 items.forEach((item) => {
     const a = item.dataset.url.replace('sensor.', '/')
     if (a === href || (a === 'main.index' && (href === '/home' || href === '/'))) {
@@ -25,6 +30,24 @@ document.body.addEventListener('click', (e) => {
         nested.classList.add('open')
         navButton.setAttribute('aria-expanded', true)
     }
+})
+
+menuToggle.addEventListener('click', () => {
+    mobileMenu.classList.add('open')
+    mobileMenuOverlay.classList.add('active')
+    menuToggle.setAttribute('aria-expanded', true)
+})
+
+menuClose.addEventListener('click', () => {
+    mobileMenu.classList.remove('open')
+    mobileMenuOverlay.classList.remove('active')
+    menuToggle.setAttribute('aria-expanded', false)
+})
+
+mobileMenuOverlay.addEventListener('click', () => {
+    mobileMenu.classList.remove('open')
+    mobileMenuOverlay.classList.remove('active')
+    menuToggle.setAttribute('aria-expanded', false)
 })
 
 switchButtons.forEach((button) => {
