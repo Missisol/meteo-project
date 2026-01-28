@@ -25,16 +25,6 @@ buttonHistory.addEventListener('click', () => {
   historyDialog.showModal()
 })
 
-buttonToggleEl.addEventListener('click', (e) => {
-  if (formSection.classList.contains('open')) {
-    formSection.classList.remove('open')
-    buttonToggleEl.setAttribute('aria-expanded', false)
-  } else {
-    formSection.classList.add('open')
-    buttonToggleEl.setAttribute('aria-expanded', true)
-  }
-})
-
 function setupForm() {
   const formattedDate = getMaxDateForCalehdar()
   startInput.setAttribute('max', formattedDate)

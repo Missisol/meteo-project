@@ -14,8 +14,8 @@ const mobileMenu = document.querySelector('#mobile-menu');
 const mobileMenuOverlay = document.querySelector('.mobile-menu-overlay');
 
 items.forEach((item) => {
-    const a = item.dataset.url.replace('sensor.', '/')
-    if (a === href || (a === 'main.index' && (href === '/home' || href === '/'))) {
+    const a = `/${item.dataset.url.split('.')[1]}`
+    if (a === href || (a === '/index' && (href === '/home' || href === '/'))) {
         item.classList.add('active')
     } else {
         item.classList.remove('active')

@@ -14,7 +14,7 @@ bme = BME280Module()
 @bp.route('/')
 @bp.route('/home')
 def index():
-    return render_template('home.html', title='Home')
+    return render_template('main/home.html', title='Home')
 
 
 @bp.route('/bme280Outer')
