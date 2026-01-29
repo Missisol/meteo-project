@@ -39,25 +39,15 @@ function getElementMap(prefix, postfix) {
 }
 
 function getTextContent(map, data) {
-    map.forEach((element, key) => {
-        if (!element) return
-
-        if (key.startsWith('date')) {
-            try {
-                if (data?.created_at) {
-                    const date = new Date(data.created_at)
-                    if (isNaN(date.getTime())) throw new Error('Invalid date')
-                    const localDate = new Date(date.getTime() + date.getTimezoneOffset() * 60000)
-                    element.textContent = formatDate(localDate)
-                } else {
-                    element.textContent = new Date().toLocaleString('ru')
-                }
-            } catch (error) {
-                console.error('Date formatting error:', error)
-                element.textContent = 'Ошибка даты'
-            }
-        } else {
-            element.textContent = data[key] === 0 ? 'Нет данных' : data[key]
+    map.forEach((v, k) => {
+        if (v && k.startsWith('date')) {
+            v.textContent = data?.created_at ? new Date(data.created_at).toLocaleString('ru') : new Date().toLocaleString('ru')
+        } 
+        // if (v && data[k] && !k.startsWith('date')) {
+        //     v.textContent = data[k]
+        // }
+        if (v && !k.startsWith('date')) {
+            v.textContent = data[k] === 0 ? 'Нет данных' : data[k]
         }
     })
 }

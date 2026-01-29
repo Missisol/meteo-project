@@ -23,8 +23,8 @@ class Bme280Outer(db.Model):
     humidity: so.Mapped[float] = so.mapped_column(sa.Float)
     pressure: so.Mapped[int] = so.mapped_column(sa.Integer)
     created_at: so.Mapped[datetime] = so.mapped_column(
-        index=True, default=lambda: datetime.now())
-    date: so.Mapped[datetime] = so.mapped_column(index=True, default=lambda: datetime.now().date())
+        index=True, default=lambda: datetime.now(timezone.utc))
+    date: so.Mapped[datetime] = so.mapped_column(index=True, default=lambda: datetime.now(timezone.utc).date())
     # date: so.Mapped[datetime] = so.mapped_column(index=True, default=lambda: date.today())
     
     def __repr__(self):
@@ -38,7 +38,7 @@ class Dht22(db.Model):
     temperature2: so.Mapped[float] = so.mapped_column(sa.Float)
     humidity2: so.Mapped[float] = so.mapped_column(sa.Float)
     created_at: so.Mapped[datetime] = so.mapped_column(
-        index=True, default=lambda: datetime.now())
+        index=True, default=lambda: datetime.now(timezone.utc))
 
     def __repr__(self):
         return f"temperature-1: {self.temperature1}, humidity-1: {self.humidity1}, temperature-2: {self.temperature2}, humidity-2: {self.humidity2}, created_at: {self.created_at}"
@@ -47,7 +47,7 @@ class Dht22(db.Model):
 class BmeHistory(db.Model):
     id: so.Mapped[int] = so.mapped_column(primary_key=True)
     date: so.Mapped[datetime] = so.mapped_column(
-    index=True, default=lambda: datetime.now().date())
+    index=True, default=lambda: datetime.now(timezone.utc).date())
     min_temperature: so.Mapped[float] = so.mapped_column(sa.Float)
     max_temperature: so.Mapped[float] = so.mapped_column(sa.Float)
     min_humidity: so.Mapped[float] = so.mapped_column(sa.Float)
@@ -72,7 +72,7 @@ class Observations(db.Model):
     precipitation_rate: so.Mapped[Optional[str]] = so.mapped_column(sa.String(15), default='none')
     snow_depth: so.Mapped[Optional[int]] = so.mapped_column(sa.Integer, default=0)
     created_at: so.Mapped[datetime] = so.mapped_column(
-        index=True, default=lambda: datetime.now())
+        index=True, default=lambda: datetime.now(timezone.utc))
     
     def __repr__(self):
         return f"id: {self.id}, cloudiness: {self.cloudiness}, precipitation: {self.precipitation}, snow_depth: {self.snow_depth}, precipitation_rate: {self.precipitation_rate}, created_at: {self.created_at}"
