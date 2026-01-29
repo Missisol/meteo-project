@@ -37,7 +37,7 @@ if (alert) {
 async function getObservationData(id) {
   editDialog.querySelector('#editId').value = id
   try {
-    const response = await fetch(`/observations/${id}/data`)
+    const response = await fetch(`/api/observations/${id}/data`)
     const data = await response.json()
     editDialog.querySelector('#created-at').textContent = data.created_at
     editDialog.querySelector('#cloudiness').value = data.cloudiness || 'clear'
@@ -143,7 +143,7 @@ function init() {
         if (!id) return
         const form = deleteDialog.querySelector(`#delete-form`)
         if (form) {
-          form.action = `/observations/${id}/delete`
+          form.action = `/api/observations/${id}/delete`
         }
          deleteDialog.showModal()
       })
