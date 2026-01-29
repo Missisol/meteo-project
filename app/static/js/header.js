@@ -1,5 +1,4 @@
 const pathname = document.location.pathname
-const href = document.location.pathname
 const items = Array.from(document.querySelectorAll('.nav__item'))
 
 const colorScheme = document.querySelector('meta[name=color-scheme]');
@@ -11,11 +10,11 @@ const navButton = document.querySelector('.nav__button')
 const menuToggle = document.querySelector('.menu-toggle');
 const menuClose = document.querySelector('.menu-close');
 const mobileMenu = document.querySelector('#mobile-menu');
-const mobileMenuOverlay = document.querySelector('.mobile-menu-overlay');
 
 items.forEach((item) => {
-    const a = `/${item.dataset.url.split('.')[1]}`
-    if (a === href || (a === '/index' && (href === '/home' || href === '/'))) {
+    const a = `${item.dataset.url.split('.')[1]}`
+    const b = pathname.split('/').at(-1)
+    if (a === b || (a === 'index' && (b === 'home' || b === ''))) {
         item.classList.add('active')
     } else {
         item.classList.remove('active')
@@ -34,21 +33,14 @@ document.body.addEventListener('click', (e) => {
 
 menuToggle.addEventListener('click', () => {
     mobileMenu.classList.add('open')
-    mobileMenuOverlay.classList.add('active')
     menuToggle.setAttribute('aria-expanded', true)
 })
 
 menuClose.addEventListener('click', () => {
     mobileMenu.classList.remove('open')
-    mobileMenuOverlay.classList.remove('active')
     menuToggle.setAttribute('aria-expanded', false)
 })
 
-mobileMenuOverlay.addEventListener('click', () => {
-    mobileMenu.classList.remove('open')
-    mobileMenuOverlay.classList.remove('active')
-    menuToggle.setAttribute('aria-expanded', false)
-})
 
 switchButtons.forEach((button) => {
 	button.addEventListener('click', () => {
