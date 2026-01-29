@@ -3,6 +3,7 @@ import logging
 from logging.handlers import RotatingFileHandler
 import os
 import requests
+import time
 from datetime import datetime, timedelta, timezone
 from flask import Flask, request, current_app
 from config import Config
@@ -48,6 +49,8 @@ def create_app(config_class=Config):
     from app.pwa import bp as pwa_bp
     app.register_blueprint(pwa_bp)
 
+    from app.observations import bp as observations_bp
+    app.register_blueprint(observations_bp)
 
     if not app.debug and not app.testing:
         if not os.path.exists('logs'):
@@ -190,16 +193,24 @@ def create_app(config_class=Config):
             db.session.commit()
 
     
-    def send_to_telegram(text):
+    def send_to_telegram(text, max_retries=3, retry_delay=10):
         bot_token = app.config['BOT_TOKEN']
         chat_id = app.config['CHAT_ID']
         url = f'https://api.telegram.org/bot{bot_token}/sendMessage'
         data = {'chat_id': chat_id, 'text': text}
-        try:
-            response = requests.post(url, data=data)
-            response.raise_for_status()
-        except requests.exceptions.RequestException as e:
-            app.logger.error(f"Failed to send message to Telegram: {e}")
+
+        for attempt in range(max_retries):
+            try:
+                response = requests.post(url, data=data)
+                response.raise_for_status()
+                return True
+            except requests.exceptions.RequestException as e:
+                app.logger.error(f"Attempt {attempt + 1} failed to send message to Telegram: {e}")
+                if attempt < max_retries - 1:
+                    time.sleep(retry_delay)
+                else:
+                    app.logger.error(f"Failed to send message to Telegram after {max_retries} attempts")
+                    return False
 
 
     mqttc = connect_mqtt()

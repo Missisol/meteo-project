@@ -1,3 +1,5 @@
+import { formatDate } from "./helpers.js"
+
 const rpiT = document.querySelector('#rpi-temperature')
 const bmeT = document.querySelector('#bme-temperature')
 const dht1T = document.querySelector('#dht1-temperature')
@@ -41,8 +43,11 @@ function getTextContent(map, data) {
         if (v && k.startsWith('date')) {
             v.textContent = data?.created_at ? new Date(data.created_at).toLocaleString('ru') : new Date().toLocaleString('ru')
         } 
-        if (v && data[k] && !k.startsWith('date')) {
-            v.textContent = data[k]
+        // if (v && data[k] && !k.startsWith('date')) {
+        //     v.textContent = data[k]
+        // }
+        if (v && !k.startsWith('date')) {
+            v.textContent = data[k] === 0 ? 'Нет данных' : data[k]
         }
     })
 }
