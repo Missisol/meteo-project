@@ -5,7 +5,8 @@ import sqlalchemy as sa
 from app.main import bp
 from app.sensor.sensor_rpi import BME280Module
 from app.models import Bme280Outer
-from app.utils.sensor_data import list_bme, list_dht, sensors_list, weather_list, theme_switcher, form_buttons, main_menu
+from app.utils.sensor_data import list_bme, list_dht, sensors_list, weather_list
+from app.utils.common_data import main_menu, theme_switcher, form_buttons
 
 bme = BME280Module()
 
@@ -13,7 +14,7 @@ bme = BME280Module()
 @bp.route('/')
 @bp.route('/home')
 def index():
-    return render_template('home.html', title='Home')
+    return render_template('main/home.html', title='Home')
 
 
 @bp.route('/bme280Outer')

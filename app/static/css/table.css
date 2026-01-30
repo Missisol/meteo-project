@@ -85,3 +85,14 @@ th.table__cell {
 th + th {
     border-left: 1px solid var(--base-blue-color);
 }
+
+.table__button-box {
+    display: flex;
+    gap: var(--gap4);
+}
+
+.data__cloudiness {
+    width: 28px;
+    height: 28px;
+    color: var(--base-blue-color);
+}

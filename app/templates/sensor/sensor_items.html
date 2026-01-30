@@ -17,16 +17,15 @@
 
     <h1 class="page-title">{{ title }}</h1>
 
-    {% import 'includes/sensor_item.html' as sensor %}
-    {% import 'includes/history_charts.html' as history %}
+    {% import 'sensor/sensor_item.html' as sensor %}
+    {% import 'sensor/history_charts.html' as history %}
 
     {% for prefix in list %}
         {% if prefix=='rpi' %}
             {{ sensor.get_item('BME280 RPI', 'sensor.bme280_rpi',  'rpi', bme_list) }}
         {% elif prefix=='bme' %}
             {{ sensor.get_item('BME280 ESP8266', 'sensor.bme280_outer', 'bme', bme_list) }}
-            {% include 'includes/history_form.html' %}
-            {{ history.get_charts('BME280 история', 'sensor.bme_history') }}
+            {{ history.get_charts('BME280 история', 'sensor.bme_history', form_buttons) }}
         {% elif prefix=='dht1' %}
             {{ sensor.get_item('DHT22 1 ESP8266', 'sensor.dht22_outer', 'dht1', dht_list) }}
         {% elif prefix=='dht2'  %}

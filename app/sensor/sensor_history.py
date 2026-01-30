@@ -48,10 +48,6 @@ def get_minmax_bme_data():
                 db.session.add(history)
                 db.session.commit()
 
-                # delete_model_data(Bme280Outer, x)
-
-            # elif bme_earlier_data and history_earlier_data:
-            #     delete_model_data(Bme280Outer, x)
             else:
                 print('BME data has already been saved')
 

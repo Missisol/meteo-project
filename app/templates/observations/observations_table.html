@@ -1,0 +1,71 @@
+<section class="section">
+    <div class="table-wrapper">
+        <table class="table">
+        {% if data %}
+            <caption class="table__caption">
+                <nav class="table__nav nav__desktop">
+                    {% include 'includes/table_nav.html' %}
+                </nav>
+            </caption>
+            <thead>
+                <tr>
+                    {% for item in table.th %}
+                        <th class="table__cell">
+                            <span class="cell-th">{{ item|safe }}</span>
+                        </th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody class="table__body">
+                {% for d in data %}
+                    <tr>
+                        {% for item in table.td %}
+                            {% if item == 'created_at' %}
+                                <td class="table__cell">
+                                    <span>{{ d[item]|datetimeformat }}</span>
+                                </td>
+                            {% elif item == 'cloudiness' %}
+                                <td class="table__cell">
+                                    <span class="data">
+                                        <span class="data__{{ item }}">
+                                            {% include 'icons/' + d[item] + '.svg' %}
+                                        </span>
+                                    </span>
+                                </td>   
+                            {% elif item == 'snow_depth' %}
+                                <td class="table__cell">
+                                    <span class="data">
+                                        <span class="data__{{ item }} {{ d[item] }}">{{ d[item] }}</span>
+                                    </span>
+                                </td>
+                            {% elif item == 'actions' %}
+                                <td class="table__cell">
+                                    <div class="table__button-box">
+                                        <button type="button" id="edit-button" class="button button--icon-blue" name="edit" data-id="{{ d.id }}">
+                                            {% include 'icons/icon_edit.svg' %}
+                                        </button>
+                                        <button type="button" id="delete-button" class="button button--icon-red" name="delete" data-id="{{ d.id }}">
+                                            {% include 'icons/icon_delete.svg' %}
+                                        </button>
+                                    </div>
+                                </td>
+                            {% else %}
+                                <td class="table__cell">
+                                    <span class="data">
+                                        <span class="data__{{ item }} {{ d[item] }}">{{ add_table[item][d[item]] }}</span>
+                                    </span>
+                                </td>   
+                            {% endif %}         
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        {% else %}
+            <p>Нет данных</p>
+        {% endif %}
+        </table>
+    </div>
+    <nav class="table__nav nav__mobile">
+        {% include 'includes/table_nav.html' %}
+    </nav>
+</section>
