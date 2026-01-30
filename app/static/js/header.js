@@ -1,15 +1,16 @@
 const pathname = document.location.pathname
-const items = Array.from(document.querySelectorAll('.nav__item'))
+const items = document.querySelectorAll('.nav__item')
 
-const colorScheme = document.querySelector('meta[name=color-scheme]');
-const switchButtons = document.querySelectorAll('.theme-switcher__button');
+const colorScheme = document.querySelector('meta[name=color-scheme]')
+const switchButtons = document.querySelectorAll('.theme-switcher__button')
 
 const nested = document.querySelector('#menu-dropdown')
 const navButton = document.querySelector('.nav__button')
 
-const menuToggle = document.querySelector('.menu-toggle');
-const menuClose = document.querySelector('.menu-close');
-const mobileMenu = document.querySelector('#mobile-menu');
+const menuToggle = document.querySelector('.menu-toggle')
+const menuClose = document.querySelector('.menu-close')
+const mobileMenu = document.querySelector('#mobile-menu')
+const mobileMenuOverlay = document.querySelector('.mobile-menu-overlay')
 
 items.forEach((item) => {
     const a = `${item.dataset.url.split('.')[1]}`
@@ -33,14 +34,21 @@ document.body.addEventListener('click', (e) => {
 
 menuToggle.addEventListener('click', () => {
     mobileMenu.classList.add('open')
+    mobileMenuOverlay.classList.add('active')
     menuToggle.setAttribute('aria-expanded', true)
 })
 
 menuClose.addEventListener('click', () => {
     mobileMenu.classList.remove('open')
+    mobileMenuOverlay.classList.remove('active')
     menuToggle.setAttribute('aria-expanded', false)
 })
 
+mobileMenuOverlay.addEventListener('click', () => {
+    mobileMenu.classList.remove('open')
+    mobileMenuOverlay.classList.remove('active')
+    menuToggle.setAttribute('aria-expanded', false)
+})
 
 switchButtons.forEach((button) => {
 	button.addEventListener('click', () => {

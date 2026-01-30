@@ -29,6 +29,7 @@
   --gap10: calc(var(--gap) * 10); /* 20px */
   --gap16: calc(var(--gap) * 16); /* 32px */
   --gap32: calc(var(--gap) * 32); /* 64px */
+  --gap64: calc(var(--gap) * 64); /* 128px */
 
   --container-width: 1300px;
 }
