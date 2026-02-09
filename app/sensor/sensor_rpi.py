@@ -2,7 +2,7 @@ import smbus2
 import bme280
 from app import db
 from app.models import Bme280Rpi
-from datetime import datetime
+from datetime import datetime, timezone
 import logging
 
 # Настройка логирования
@@ -28,7 +28,7 @@ class BME280Module:
     def get_sensor_readings(self):
         if not self.sensor_available:
             logger.warning("Датчик BME280 недоступен. Возвращаю нулевые значения.")
-            return (0.0, 0, 0.0, datetime.now())
+            return (0.0, 0, 0.0, datetime.now(timezone.utc))
         
         try:
             sample_reading = bme280.sample(self.bus, BME280Module.ADDRESS, self.calibration_params)
@@ -49,7 +49,7 @@ class BME280Module:
             
         except Exception as e:
             logger.warning(f"Ошибка при чтении данных с датчика BME280: {e}. Возвращаю нулевые значения.")
-            return (0.0, 0, 0.0, datetime.now())
+            return (0.0, 0, 0.0, datetime.now(timezone.utc))
     
     
     def save_sensor_readings(self):

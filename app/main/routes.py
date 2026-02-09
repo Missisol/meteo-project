@@ -1,14 +1,34 @@
 from datetime import datetime, date
 from flask import render_template, request, url_for, jsonify
-from app import db
+from flask_babel import format_datetime
 import sqlalchemy as sa
+
+from app import db
 from app.main import bp
-from app.sensor.sensor_rpi import BME280Module
 from app.models import Bme280Outer
 from app.utils.sensor_data import list_bme, list_dht, sensors_list, weather_list
 from app.utils.common_data import main_menu, theme_switcher, form_buttons
 
-bme = BME280Module()
+
+@bp.app_template_filter('datetimeformat')
+def datetimeformat(value):
+    print(f'value{value}')
+    return format_datetime(value, 'd.MM.YY, HH:mm')
+    # return datetime.strftime(value, '%d.%m.%y, %H:%M')
+    # return datetime.strftime(value, '%d.%m.%y - %H:%M:%S')
+
+
+@bp.app_template_filter('dateformat')
+def dateformat(value):
+    return format_datetime(value, 'd.MM.yyyy')
+    # return datetime.strftime(value, '%d.%m.%y')
+
+@bp.app_template_filter('time')
+def timeformat(value):
+    if value: 
+        return format_datetime(value, 'HH:mm')
+    else:
+        return '-'
 
 
 @bp.route('/')
