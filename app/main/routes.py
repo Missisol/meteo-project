@@ -1,4 +1,4 @@
-from datetime import datetime, date
+from datetime import datetime, date, timezone
 from flask import render_template, request, url_for, jsonify
 from flask_babel import format_datetime
 import sqlalchemy as sa
@@ -57,7 +57,7 @@ def get_bme_mqtt_data():
                 'temperature': '-',
                 'humidity': '-',
                 'pressure': '-',
-                'created_at': datetime.now(),
+                'created_at': datetime.now(timezone.utc),
                 'date': date.today(),
             }
         )
