@@ -5,12 +5,10 @@ import sqlalchemy as sa
 
 from app import db
 from app.main import bp
-# from app.sensor.sensor_rpi import BME280Module
 from app.models import Bme280Outer
 from app.utils.sensor_data import list_bme, list_dht, sensors_list, weather_list
 from app.utils.common_data import main_menu, theme_switcher, form_buttons
 
-# bme = BME280Module()
 
 @bp.app_template_filter('datetimeformat')
 def datetimeformat(value):
