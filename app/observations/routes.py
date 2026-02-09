@@ -9,11 +9,6 @@ from app.models import Observations
 from app.utils.observations_data import observations_table, observations_map
 from app.observations.forms import EmptyForm, ObservationForm, EditForm, FilterForm
 
-@bp.app_template_filter('datetimeformat')
-def datetimeformat(value):
-    # return format_datetime(value, 'd.MM.YY, HH:mm')
-    return datetime.strftime(value, '%d.%m.%y, %H:%M')
-
 
 @bp.route('/observations')
 def observations():
@@ -87,7 +82,7 @@ def create_observation():
         precipitation_rate = request.form.get('precipitation_rate', 'none')
         snow_depth = request.form.get('snow_depth', 0, type=int)
         created_at_str = request.form.get('created_at')
-        created_at = datetime.strptime(created_at_str, '%Y-%m-%d') if created_at_str else datetime.now()
+        created_at = datetime.strptime(created_at_str, '%Y-%m-%d') if created_at_str else datetime.now(timezone.utc)
         
         # Проверка на существование записи с такой же датой (без учета времени)
         query = sa.select(Observations).where(
