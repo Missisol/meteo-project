@@ -5,9 +5,30 @@ import sqlalchemy as sa
 from app.sensor import bp
 from app.models import Bme280Rpi, Bme280Outer, Dht22, BmeHistory
 from app.utils.sensor_data import bme_rpi_table, bme_outer_table, dht_outer_table, history_table
+from flask_babel import format_datetime
 
 from app.sensor.sensor_rpi import BME280Module
 bme = BME280Module()
+
+
+@bp.app_template_filter('datetimeformat')
+def datetimeformat(value):
+    return format_datetime(value, 'd.MM.YY, HH:mm')
+    # return datetime.strftime(value, '%d.%m.%y - %H:%M:%S')
+
+
+@bp.app_template_filter('dateformat')
+def dateformat(value):
+    return format_datetime(value, 'd.MM.yyyy')
+    # return datetime.strftime(value, '%d.%m.%y')
+
+
+@bp.app_template_filter('time')
+def timeformat(value):
+    if value: 
+        return format_datetime(value, 'HH:mm')
+    else:
+        return '-'
 
 
 @bp.route('/sensors')

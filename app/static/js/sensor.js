@@ -63,6 +63,7 @@ async function getSensorData(url, prefix, postfix) {
 async function checkContent() {
     if (dht1T && !dht1T.innerText) {
         const res = await getSensorData('/api/dht22_mqtt', ['dht1', 'dht2'], postfixDht)
+        console.log('res', res)
         
         if (!res.created_at) {
              getSensorData('/api/dht22_db', ['dht1', 'dht2'], postfixDht)
