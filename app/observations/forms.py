@@ -1,10 +1,11 @@
+import datetime
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, SelectField, DateField, HiddenField
 from wtforms.validators import ValidationError, DataRequired, Length
 
 
 class ObservationForm(FlaskForm):
-    created_at = DateField('Дата')
+    created_at = DateField('Дата', default=datetime.date.today)
     cloudiness = SelectField('Облачность',
         choices=[
             ('clear', 'Ясно'),

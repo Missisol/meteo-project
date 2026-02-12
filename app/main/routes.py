@@ -12,7 +12,6 @@ from app.utils.common_data import main_menu, theme_switcher, form_buttons
 
 @bp.app_template_filter('datetimeformat')
 def datetimeformat(value):
-    print(f'value{value}')
     return format_datetime(value, 'd.MM.YY, HH:mm')
     # return datetime.strftime(value, '%d.%m.%y, %H:%M')
     # return datetime.strftime(value, '%d.%m.%y - %H:%M:%S')
