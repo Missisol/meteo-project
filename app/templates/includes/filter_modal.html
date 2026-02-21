@@ -2,7 +2,7 @@
     {% with title='Фильтр по дате', commandfor='filter-dialog' %}
         {% include 'includes/form_heading.html' %}
     {% endwith %}
-    {% include 'icons/icon_change.html' %}
+    {% include 'icons/icon_change.svg' %}
     <form method="get" action="{{ request.path }}" class="form filter-form" id="filter-form">
         {{ filter_form.hidden_tag() }}
         <div class="calendar-wrapper">
