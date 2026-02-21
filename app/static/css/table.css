@@ -9,7 +9,7 @@
 .table-title {
     font-size: 24px;
     color: var(--base-blue-color);
-    margin-bottom: var(--gap8);
+   margin-block-end: var(--gap8);
 }
 
 .table__caption {
@@ -95,4 +95,37 @@ th + th {
     width: 28px;
     height: 28px;
     color: var(--base-blue-color);
+}
+
+.cloudiness-legend {
+    padding: var(--gap4);
+}
+
+.legend-title {
+    font-size: 18px;
+    color: var(--base-blue-color);
+    margin-block-end: var(--gap4);
+}
+
+.legend-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--gap4);
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: var(--gap2);
+}
+
+.legend-item svg {
+    width: 28px;
+    height: 28px;
+    color: var(--base-blue-color);
+}
+
+.legend-text {
+    font-size: 14px;
+    color: var(--text-color);
 }

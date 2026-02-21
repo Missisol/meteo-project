@@ -30,6 +30,17 @@
     {% endif %}
     {% endwith %}
   </div>
+  <div class="cloudiness-legend">
+    <h3 class="legend-title">Легенда облачности:</h3>
+    <div class="legend-items">
+      {% for t in add_table['cloudiness']  %}
+      <div class="legend-item">
+        {% include 'icons/' + t + '.svg' %}
+        <span class="legend-text">{{ add_table['cloudiness'][t] }}</span>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
   {% include 'observations/observations_table.html' %}
   {% include 'observations/create_modal.html' %}
   {% include 'observations/edit_modal.html' %}
