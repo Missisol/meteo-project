@@ -64,9 +64,3 @@ class EditForm(FlaskForm):
 
 class EmptyForm(FlaskForm):
     submit = SubmitField('Удалить')
-
-class FilterForm(FlaskForm):
-    start_date = DateField('Начальная дата', format='%Y-%m-%d', validators=[DataRequired()])
-    end_date = DateField('Конечная дата', format='%Y-%m-%d', validators=[DataRequired()])
-    submit = SubmitField('Фильтровать')
-    clear = SubmitField('Очистить')

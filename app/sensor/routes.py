@@ -1,10 +1,12 @@
 from datetime import datetime, date, timezone, timedelta
-from flask import render_template, request, url_for, current_app, jsonify
+from flask import render_template, request, url_for, current_app, jsonify, flash
 from app import db
 import sqlalchemy as sa
 from app.sensor import bp
 from app.models import Bme280Rpi, Bme280Outer, Dht22, BmeHistory
 from app.utils.sensor_data import bme_rpi_table, bme_outer_table, dht_outer_table, history_table
+from app.main.forms import FilterForm
+from app.utils.date_filters import local_date_to_utc_range, apply_date_filters
 
 from app.sensor.sensor_rpi import BME280Module
 bme = BME280Module()
@@ -18,54 +20,89 @@ def sensors():
 @bp.route('/api/table/bme280_rpi')
 def bme280_rpi():
     """Return BME280 RPI data from db with pagination - for table"""
+    filter_form = FilterForm()
     page = request.args.get('page', 1, type=int)
-    query = sa.select(Bme280Rpi).order_by(Bme280Rpi.created_at.desc())
+    
+    query = sa.select(Bme280Rpi)
+    query, url_args, start_date_str, end_date_str, start_date, end_date = apply_date_filters(
+        query, Bme280Rpi, filter_form, current_app.config['TIMEZONE'], 'datetime'
+    )
+
+    query = query.order_by(Bme280Rpi.created_at.desc())
     data = db.paginate(query, page=page, per_page=current_app.config['ITEMS_PER_PAGE'], error_out=False)
-    next_url = url_for('sensor.api.table.bme280_rpi', page=data.next_num) \
+
+    next_url = url_for('sensor.bme280_rpi', page=data.next_num, **url_args) \
         if data.has_next else None
-    prev_url = url_for('sensor.api.table.bme280_rpi', page=data.prev_num) \
+    prev_url = url_for('sensor.bme280_rpi', page=data.prev_num, **url_args) \
         if data.has_prev else None
-    return render_template('sensor/sensor_table.html', title='BME280 RPI', data=data.items, next_url=next_url, prev_url=prev_url, table=bme_rpi_table)
+    
+    return render_template('sensor/sensor_table.html', title='BME280 RPI', data=data.items, next_url=next_url, prev_url=prev_url, table=bme_rpi_table, filter_form=filter_form, start_date=start_date_str, end_date=end_date_str)
 
 
 @bp.route('/api/table/bme280_outer')
 def bme280_outer():
     """Return BME280 Outer data from db with pagination - for table"""
+    filter_form = FilterForm()
     page = request.args.get('page', 1, type=int)
-    query = sa.select(Bme280Outer).order_by(Bme280Outer.created_at.desc())
+    
+    query = sa.select(Bme280Outer)
+    query, url_args, start_date_str, end_date_str, start_date, end_date = apply_date_filters(
+        query, Bme280Outer, filter_form, current_app.config['TIMEZONE'], 'datetime'
+    )
+
+    query = query.order_by(Bme280Outer.created_at.desc())
     data = db.paginate(query, page=page, per_page=current_app.config['ITEMS_PER_PAGE'], error_out=False)
-    next_url = url_for('sensor.bme280_outer', page=data.next_num) \
+
+    next_url = url_for('sensor.bme280_outer', page=data.next_num, **url_args) \
         if data.has_next else None
-    prev_url = url_for('sensor.bme280_outer', page=data.prev_num) \
+    prev_url = url_for('sensor.bme280_outer', page=data.prev_num, **url_args) \
         if data.has_prev else None
-    return render_template('sensor/sensor_table.html', title='BME280 внешний', data=data.items, next_url=next_url, prev_url=prev_url, table=bme_outer_table)
+    
+    return render_template('sensor/sensor_table.html', title='BME280 внешний', data=data.items, next_url=next_url, prev_url=prev_url, table=bme_outer_table, filter_form=filter_form, start_date=start_date_str, end_date=end_date_str)
 
 
 @bp.route('/api/table/dht22_outer')
 def dht22_outer():
     """Return DHT22 data from db with pagination - for table"""
+    filter_form = FilterForm()
     page = request.args.get('page', 1, type=int)
-    query = sa.select(Dht22).order_by(Dht22.created_at.desc())
+    
+    query = sa.select(Dht22)
+    query, url_args, start_date_str, end_date_str, start_date, end_date = apply_date_filters(
+        query, Dht22, filter_form, current_app.config['TIMEZONE'], 'datetime'
+    )
+
+    query = query.order_by(Dht22.created_at.desc())
     data = db.paginate(query, page=page, per_page=current_app.config['ITEMS_PER_PAGE'], error_out=False)
-    next_url = url_for('sensor.dht22_outer', page=data.next_num) \
+
+    next_url = url_for('sensor.dht22_outer', page=data.next_num, **url_args) \
         if data.has_next else None
-    prev_url = url_for('sensor.dht22_outer', page=data.prev_num) \
+    prev_url = url_for('sensor.dht22_outer', page=data.prev_num, **url_args) \
         if data.has_prev else None
-    return render_template('sensor/sensor_table.html', title='DHT22', data=data.items, next_url=next_url, prev_url=prev_url, table=dht_outer_table)
+    
+    return render_template('sensor/sensor_table.html', title='DHT22', data=data.items, next_url=next_url, prev_url=prev_url, table=dht_outer_table, filter_form=filter_form, start_date=start_date_str, end_date=end_date_str)
 
 
 @bp.route('/api/table/bme_history')
 def bme_history():
     """Return BME History data with pagination - for table"""
+    filter_form = FilterForm()
     page = request.args.get('page', 1, type=int)
-    query = sa.select(BmeHistory).order_by(BmeHistory.date.desc())
-    data = db.paginate(query, page=page, per_page=current_app.config['ITEMS_PER_PAGE'], error_out=False)   
-    # data = db.session.scalars(query)
-    next_url = url_for('sensor.bme_history', page=data.next_num) \
+    
+    query = sa.select(BmeHistory)
+    query, url_args, start_date_str, end_date_str, start_date, end_date = apply_date_filters(
+        query, BmeHistory, filter_form, current_app.config['TIMEZONE'], 'date'
+    )
+
+    query = query.order_by(BmeHistory.date.desc())
+    data = db.paginate(query, page=page, per_page=current_app.config['ITEMS_PER_PAGE'], error_out=False)
+
+    next_url = url_for('sensor.bme_history', page=data.next_num, **url_args) \
         if data.has_next else None
-    prev_url = url_for('sensor.bme_history', page=data.prev_num) \
+    prev_url = url_for('sensor.bme_history', page=data.prev_num, **url_args) \
         if data.has_prev else None
-    return render_template('sensor/sensor_table.html', title='BME280 история', data=data.items, next_url=next_url, prev_url=prev_url, table=history_table)
+    
+    return render_template('sensor/sensor_table.html', title='BME280 история', data=data.items, next_url=next_url, prev_url=prev_url, table=history_table, filter_form=filter_form, start_date=start_date_str, end_date=end_date_str)
 
 
 @bp.route('/api/json_history', methods=['GET', 'POST'])

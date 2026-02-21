@@ -16,7 +16,7 @@
     <button type="button" class="button button--blue" id="create-button">Добавить наоблюдение</button>
     <button type="button" class="button button--blue" id="filter-button">Задать период</button>
     {% if start_date and end_date %}
-    <a href="{{ url_for('observations.observations') }}" class="button button--invert">Сбросить фильтр</a>
+    <a href="{{ request.path }}" class="button button--invert">Сбросить фильтр</a>
     {% else %}
     <button class="button button--invert disabled">Сбросить фильтр</button>
     {% endif %}
@@ -34,11 +34,12 @@
   {% include 'observations/create_modal.html' %}
   {% include 'observations/edit_modal.html' %}
   {% include 'observations/delete_modal.html' %}
-  {% include 'observations/filter_modal.html' %}
+  {% include 'includes/filter_modal.html' %}
 </div>
 {% endblock %}
 
 {% block script %}
   {{ super() }}
   <script src="{{ url_for('static', filename='js/observations.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/modal.js') }}"></script>
 {% endblock %}

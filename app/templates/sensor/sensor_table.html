@@ -1,12 +1,30 @@
 {% extends 'base.html' %}
 
 {% block head %}
-  {{ super() }}
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/table.css')}}" />
+    {{ super() }}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/table.css')}}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/form.css')}}" />
 {% endblock %}
 
 {% block content %}
     <h1 class="table-title">{{ title }}</h1>
+    <div class="controls">
+        <button type="button" class="button button--blue" id="filter-button">Задать период</button>
+        {% if start_date and end_date %}
+        <a href="{{ request.path }}" class="button button--invert">Сбросить фильтр</a>
+        {% else %}
+        <button class="button button--invert disabled">Сбросить фильтр</button>
+        {% endif %}
+    </div>
+    <div id="popover-flash" class="popover" popover>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+            <div class="alert alert-info {{ category }}" role="alert">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+        {% endwith %}
+    </div>
     <div class="table-wrapper">
         <table class="table">
         {% if data %}
@@ -57,4 +75,10 @@
     <nav class="table__nav nav__mobile">
         {% include 'includes/table_nav.html' %}
     </nav>
+    {% include 'includes/filter_modal.html' %}
+{% endblock %}
+
+{% block script %}
+  {{ super() }}
+  <script src="{{ url_for('static', filename='js/modal.js') }}"></script>
 {% endblock %}

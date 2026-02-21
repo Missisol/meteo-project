@@ -7,7 +7,9 @@ from app import db
 from app.observations import bp
 from app.models import Observations
 from app.utils.observations_data import observations_table, observations_map
-from app.observations.forms import EmptyForm, ObservationForm, EditForm, FilterForm
+from app.observations.forms import EmptyForm, ObservationForm, EditForm
+from app.main.forms import FilterForm
+from app.utils.date_filters import local_date_to_utc_range, apply_date_filters
 
 
 @bp.route('/observations')
@@ -18,53 +20,15 @@ def observations():
   filter_form = FilterForm()
   
   page = request.args.get('page', 1, type=int)
-  start_date_str = request.args.get('start_date')
-  end_date_str = request.args.get('end_date')
   
-  # Validate date range
-  start_date = None
-  end_date = None
-  
-  if start_date_str:
-    try:
-      start_date = datetime.strptime(start_date_str, '%Y-%m-%d').date()
-      filter_form.start_date.data = start_date
-    except ValueError:
-      pass
-  
-  if end_date_str:
-    try:
-      end_date = datetime.strptime(end_date_str, '%Y-%m-%d').date()
-      filter_form.end_date.data = end_date
-    except ValueError:
-      pass
-  
-  # Check if start date is greater than end date
-  if start_date and end_date and start_date > end_date:
-    flash('Дата начала периода больше даты конца периода. Пожалуйста, проверьте введенные даты.', 'warning')
-    # Don't apply filters if dates are invalid
-    query = sa.select(Observations)
-  else:
-    # Build query
-    query = sa.select(Observations)
-    
-    # Apply date filters
-    if start_date:
-      query = query.where(sa.func.date(Observations.created_at) >= start_date)
-    
-    if end_date:
-      query = query.where(sa.func.date(Observations.created_at) <= end_date)
+  query = sa.select(Observations)
+  query, url_args, start_date_str, end_date_str, start_date, end_date = apply_date_filters(
+    query, Observations, filter_form, current_app.config['TIMEZONE'], 'datetime'
+  )
   
   query = query.order_by(Observations.created_at.desc())
   
   data = db.paginate(query, page=page, per_page=current_app.config['ITEMS_PER_PAGE'], error_out=False)
-  
-  # Build pagination URLs with filter parameters
-  url_args = {}
-  if start_date_str:
-    url_args['start_date'] = start_date_str
-  if end_date_str:
-    url_args['end_date'] = end_date_str
   
   next_url = url_for('observations.observations', page=data.next_num, **url_args) \
       if data.has_next else None
@@ -82,11 +46,24 @@ def create_observation():
         precipitation_rate = request.form.get('precipitation_rate', 'none')
         snow_depth = request.form.get('snow_depth', 0, type=int)
         created_at_str = request.form.get('created_at')
-        created_at = datetime.strptime(created_at_str, '%Y-%m-%d') if created_at_str else datetime.now(timezone.utc)
+        
+        if created_at_str:
+            # Если дата введена пользователем, интерпретируем её как локальную дату
+            local_date = datetime.strptime(created_at_str, '%Y-%m-%d').date()
+            # Создаем datetime как начало дня в локальном часовом поясе и конвертируем в UTC
+            from zoneinfo import ZoneInfo
+            tz = ZoneInfo(current_app.config['TIMEZONE'])
+            start_local = datetime.combine(local_date, datetime.min.time(), tzinfo=tz)
+            created_at = start_local.astimezone(ZoneInfo('UTC')).replace(tzinfo=None)
+        else:
+            created_at = datetime.now(timezone.utc)
         
         # Проверка на существование записи с такой же датой (без учета времени)
+        # Используем диапазон UTC для корректного сравнения
+        start_utc, end_utc = local_date_to_utc_range(created_at.date(), current_app.config['TIMEZONE'])
         query = sa.select(Observations).where(
-            sa.func.date(Observations.created_at) == created_at.date()
+            Observations.created_at >= start_utc,
+            Observations.created_at < end_utc
         )
         existing_observation = db.session.scalar(query)
 

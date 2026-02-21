@@ -3,7 +3,8 @@
         {% include 'includes/form_heading.html' %}
     {% endwith %}
     {% include 'icons/icon_change.html' %}
-    <form method="get" action="{{ url_for('observations.observations') }}" class="form filter-form" id="filter-form">
+    <form method="get" action="{{ request.path }}" class="form filter-form" id="filter-form">
+        {{ filter_form.hidden_tag() }}
         <div class="calendar-wrapper">
             <div class="input-wrapper">
                 {{ filter_form.start_date.label(class="form-label") }}
@@ -23,7 +24,7 @@
         <div class="buttons">
             {{ filter_form.submit(class="button button--blue") }}
             {% if start_date or end_date %}
-            <a href="{{ url_for('observations.observations') }}" class="button button--invert">Очистить</a>
+            <a href="{{ request.path }}" class="button button--invert">Очистить</a>
             {% endif %}
         </div>
     </form>
