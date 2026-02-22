@@ -9,7 +9,9 @@ class ObservationForm(FlaskForm):
     cloudiness = SelectField('Облачность',
         choices=[
             ('clear', 'Ясно'),
+            ('mostly_sunny', 'Преимущественно ясно'),
             ('cloudy', 'Облачно'),
+            ('mostly_cloudy', 'Преимущественно облачно'),
             ('overcast', 'Пасмурно')
         ],
         validators=[DataRequired()])
@@ -38,7 +40,9 @@ class EditForm(FlaskForm):
     cloudiness = SelectField('Облачность',
         choices=[
             ('clear', 'Ясно'),
+            ('mostly_sunny', 'Преимущественно ясно'),
             ('cloudy', 'Облачно'),
+            ('mostly_cloudy', 'Преимущественно облачно'),
             ('overcast', 'Пасмурно')
         ],
         validators=[DataRequired()])
@@ -64,9 +68,3 @@ class EditForm(FlaskForm):
 
 class EmptyForm(FlaskForm):
     submit = SubmitField('Удалить')
-
-class FilterForm(FlaskForm):
-    start_date = DateField('Начальная дата', format='%Y-%m-%d', validators=[DataRequired()])
-    end_date = DateField('Конечная дата', format='%Y-%m-%d', validators=[DataRequired()])
-    submit = SubmitField('Фильтровать')
-    clear = SubmitField('Очистить')
