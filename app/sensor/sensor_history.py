@@ -21,7 +21,7 @@ def get_minmax_bme_data():
         bme_earlier_data = db.session.scalars(bq).all()
 
         # Для BmeHistory используем прямое сравнение дат, так как поле date уже содержит дату
-        hq = sa.select(BmeHistory).filter(BmeHistory.date == day)
+        hq = sa.select(BmeHistory).filter(sa.func.DATE(BmeHistory.date) == day)
         history_earlier_data = db.session.scalars(hq).first()
 
         try:
@@ -65,7 +65,7 @@ def get_minmax_bme_data():
 def delete_history_data(days):
     day = datetime.now().date() - timedelta(days=days) 
     # Для BmeHistory используем прямое сравнение дат, так как поле date уже содержит дату
-    del_stmt = sa.delete(BmeHistory).where(BmeHistory.date == day)
+    del_stmt = sa.delete(BmeHistory).where(sa.func.DATE(BmeHistory.date) == day)
 
     db.session.execute(del_stmt)
     db.session.commit()
