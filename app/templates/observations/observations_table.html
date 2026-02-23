@@ -22,7 +22,7 @@
                         {% for item in table.td %}
                             {% if item == 'created_at' %}
                                 <td class="table__cell">
-                                    <span>{{ d[item]|datetimeformat }}</span>
+                                    <span>{{ d[item]|dateformat }}</span>
                                 </td>
                             {% elif item == 'cloudiness' %}
                                 <td class="table__cell">
