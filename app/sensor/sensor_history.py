@@ -4,6 +4,7 @@ from app import db
 import sqlalchemy as sa
 import sqlalchemy.orm as so
 from app.models import Bme280Outer, BmeHistory
+from app.utils.date_filters import local_date_to_utc_range
 
 
 def get_minmax_bme_data():
@@ -11,9 +12,15 @@ def get_minmax_bme_data():
         day = datetime.now().date() - timedelta(days=x) 
         print(f"date day: {day}")
 
-        bq = sa.select(Bme280Outer).filter(sa.func.DATE(Bme280Outer.created_at) == day)
+        # Фильтрация с учетом часового пояса
+        start_utc, end_utc = local_date_to_utc_range(day, current_app.config['TIMEZONE'])
+        bq = sa.select(Bme280Outer).filter(
+            Bme280Outer.created_at >= start_utc,
+            Bme280Outer.created_at < end_utc
+        )
         bme_earlier_data = db.session.scalars(bq).all()
 
+        # Для BmeHistory используем прямое сравнение дат, так как поле date уже содержит дату
         hq = sa.select(BmeHistory).filter(sa.func.DATE(BmeHistory.date) == day)
         history_earlier_data = db.session.scalars(hq).first()
 
@@ -57,6 +64,7 @@ def get_minmax_bme_data():
 
 def delete_history_data(days):
     day = datetime.now().date() - timedelta(days=days) 
+    # Для BmeHistory используем прямое сравнение дат, так как поле date уже содержит дату
     del_stmt = sa.delete(BmeHistory).where(sa.func.DATE(BmeHistory.date) == day)
 
     db.session.execute(del_stmt)
@@ -65,7 +73,12 @@ def delete_history_data(days):
 
 def delete_model_data(model, days):
     day = datetime.now().date() - timedelta(days=days) 
-    del_stmt = sa.delete(model).filter(sa.func.DATE(model.created_at) == day)
+    # Фильтрация с учетом часового пояса
+    start_utc, end_utc = local_date_to_utc_range(day, current_app.config['TIMEZONE'])
+    del_stmt = sa.delete(model).filter(
+        model.created_at >= start_utc,
+        model.created_at < end_utc
+    )
 
     db.session.execute(del_stmt)
     db.session.commit()

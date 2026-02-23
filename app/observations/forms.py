@@ -1,14 +1,17 @@
+import datetime
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, SelectField, DateField, HiddenField
 from wtforms.validators import ValidationError, DataRequired, Length
 
 
 class ObservationForm(FlaskForm):
-    created_at = DateField('Дата')
+    created_at = DateField('Дата', default=datetime.date.today)
     cloudiness = SelectField('Облачность',
         choices=[
             ('clear', 'Ясно'),
+            ('mostly_sunny', 'Преимущественно солнечно'),
             ('cloudy', 'Облачно'),
+            ('mostly_cloudy', 'Преимущественно облачно'),
             ('overcast', 'Пасмурно')
         ],
         validators=[DataRequired()])
@@ -37,7 +40,9 @@ class EditForm(FlaskForm):
     cloudiness = SelectField('Облачность',
         choices=[
             ('clear', 'Ясно'),
+            ('mostly_sunny', 'Преимущественно солечно'),
             ('cloudy', 'Облачно'),
+            ('mostly_cloudy', 'Преимущественно облачно'),
             ('overcast', 'Пасмурно')
         ],
         validators=[DataRequired()])
@@ -63,9 +68,3 @@ class EditForm(FlaskForm):
 
 class EmptyForm(FlaskForm):
     submit = SubmitField('Удалить')
-
-class FilterForm(FlaskForm):
-    start_date = DateField('Начальная дата', format='%Y-%m-%d', validators=[DataRequired()])
-    end_date = DateField('Конечная дата', format='%Y-%m-%d', validators=[DataRequired()])
-    submit = SubmitField('Фильтровать')
-    clear = SubmitField('Очистить')

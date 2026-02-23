@@ -1,4 +1,4 @@
-from datetime import datetime, date
+from datetime import datetime, date, timezone
 from flask import render_template, request, url_for, jsonify
 from flask_babel import format_datetime
 import sqlalchemy as sa
@@ -12,7 +12,6 @@ from app.utils.common_data import main_menu, theme_switcher, form_buttons
 
 @bp.app_template_filter('datetimeformat')
 def datetimeformat(value):
-    print(f'value{value}')
     return format_datetime(value, 'd.MM.YY, HH:mm')
     # return datetime.strftime(value, '%d.%m.%y, %H:%M')
     # return datetime.strftime(value, '%d.%m.%y - %H:%M:%S')
@@ -57,7 +56,7 @@ def get_bme_mqtt_data():
                 'temperature': '-',
                 'humidity': '-',
                 'pressure': '-',
-                'created_at': datetime.now(),
+                'created_at': datetime.now(timezone.utc),
                 'date': date.today(),
             }
         )
