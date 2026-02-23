@@ -6,7 +6,7 @@ from app.sensor import bp
 from app.models import Bme280Rpi, Bme280Outer, Dht22, BmeHistory
 from app.utils.sensor_data import bme_rpi_table, bme_outer_table, dht_outer_table, history_table
 from app.main.forms import FilterForm
-from app.utils.date_filters import local_date_to_utc_range, apply_date_filters
+from app.utils.date_filters import apply_date_filters
 
 from app.sensor.sensor_rpi import BME280Module
 bme = BME280Module()

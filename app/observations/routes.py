@@ -47,11 +47,14 @@ def create_observation():
         snow_depth = request.form.get('snow_depth', 0, type=int)
         created_at_str = request.form.get('created_at')
         
-        if created_at_str:
-            # Если дата введена пользователем, создаем из неё datetime как начало дня в UTC
-            created_at = datetime.strptime(created_at_str, '%Y-%m-%d')
-        else:
-            created_at = datetime.now(timezone.utc)
+        # Если дата введена пользователем, создаем из неё datetime как начало дня в UTC
+        created_at = datetime.strptime(created_at_str, '%Y-%m-%d') if created_at_str else datetime.now(timezone.utc)
+
+        # if created_at_str:
+        #     # Если дата введена пользователем, создаем из неё datetime как начало дня в UTC
+        #     created_at = datetime.strptime(created_at_str, '%Y-%m-%d')
+        # else:
+        #     created_at = datetime.now(timezone.utc)
         
         # Проверка на существование записи с такой же датой (без учета времени)
         query = sa.select(Observations).where(
