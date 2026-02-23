@@ -9,7 +9,7 @@ class ObservationForm(FlaskForm):
     cloudiness = SelectField('Облачность',
         choices=[
             ('clear', 'Ясно'),
-            ('mostly_sunny', 'Преимущественно ясно'),
+            ('mostly_sunny', 'Преимущественно солнечно'),
             ('cloudy', 'Облачно'),
             ('mostly_cloudy', 'Преимущественно облачно'),
             ('overcast', 'Пасмурно')
@@ -40,7 +40,7 @@ class EditForm(FlaskForm):
     cloudiness = SelectField('Облачность',
         choices=[
             ('clear', 'Ясно'),
-            ('mostly_sunny', 'Преимущественно ясно'),
+            ('mostly_sunny', 'Преимущественно солечно'),
             ('cloudy', 'Облачно'),
             ('mostly_cloudy', 'Преимущественно облачно'),
             ('overcast', 'Пасмурно')

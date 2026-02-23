@@ -48,22 +48,14 @@ def create_observation():
         created_at_str = request.form.get('created_at')
         
         if created_at_str:
-            # Если дата введена пользователем, интерпретируем её как локальную дату
-            local_date = datetime.strptime(created_at_str, '%Y-%m-%d').date()
-            # Создаем datetime как начало дня в локальном часовом поясе и конвертируем в UTC
-            from zoneinfo import ZoneInfo
-            tz = ZoneInfo(current_app.config['TIMEZONE'])
-            start_local = datetime.combine(local_date, datetime.min.time(), tzinfo=tz)
-            created_at = start_local.astimezone(ZoneInfo('UTC')).replace(tzinfo=None)
+            # Если дата введена пользователем, создаем из неё datetime как начало дня в UTC
+            created_at = datetime.strptime(created_at_str, '%Y-%m-%d')
         else:
             created_at = datetime.now(timezone.utc)
         
         # Проверка на существование записи с такой же датой (без учета времени)
-        # Используем диапазон UTC для корректного сравнения
-        start_utc, end_utc = local_date_to_utc_range(created_at.date(), current_app.config['TIMEZONE'])
         query = sa.select(Observations).where(
-            Observations.created_at >= start_utc,
-            Observations.created_at < end_utc
+            sa.func.date(Observations.created_at) == created_at.date()
         )
         existing_observation = db.session.scalar(query)
 
