@@ -1,0 +1,8 @@
+<div class="legend-items">
+  {% for t in add_table['cloudiness']  %}
+  <div class="legend-item">
+    {% include 'icons/' + t + '.svg' %}
+    <span class="legend-text">{{ add_table['cloudiness'][t] }}</span>
+  </div>
+  {% endfor %}
+</div>
