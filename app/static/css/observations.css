@@ -39,26 +39,24 @@
         transform: scale(1);
         opacity: 1;
 
-    @starting-style {
-        transform: scale(0);
-        opacity: 0;
+        @starting-style {
+            transform: scale(0);
+            opacity: 0;
+        }
     }
-}
 
-    /* transform: translateX(0); */
     opacity: 0;
+    background-color: var(--base-color);
+    border: 1px solid var(--base-grey-color);
+    border-radius: var(--gap4);
+    padding: var(--gap8);
 
     transition: transform, opacity, display allow-discrete, overlay allow-discrete;
     transition-duration: 0.3s;
   
     position-area: bottom span-right;
-    /* margin: initial; */
-    /* transform-origin: center left; */
-
-    background-color: var(--base-color);
-    border: 1px solid var(--base-grey-color);
-    border-radius: var(--gap4);
-    padding: var(--gap8);
+    margin: initial;
+    transform-origin: top center;
 }
 
 .legend-items {
