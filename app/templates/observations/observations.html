@@ -6,6 +6,7 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css')}}" />
   <link rel="stylesheet" href="{{ url_for('static', filename='css/table.css')}}" />
   <link rel="stylesheet" href="{{ url_for('static', filename='css/form.css')}}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/observations.css')}}" />
 {% endblock %}
 
 
@@ -21,24 +22,15 @@
     <button class="button button--invert disabled">Сбросить фильтр</button>
     {% endif %}
   </div>
-  <div id="popover-flash" class="popover" popover>
-    {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-        {% for category, message in messages %}
-        <div class="alert alert-info {{ category }}" role="alert">{{ message }}</div>
-        {% endfor %}
-    {% endif %}
-    {% endwith %}
+  {%  include 'includes/popover_flash.html' %}
+  <div class="cloudiness-legend desktop">
+    <p class="legend-title">Легенда</p>
+    {% include 'observations/popover-legend.html' %}
   </div>
-  <div class="cloudiness-legend">
-    <h3 class="legend-title">Легенда облачности:</h3>
-    <div class="legend-items">
-      {% for t in add_table['cloudiness']  %}
-      <div class="legend-item">
-        {% include 'icons/' + t + '.svg' %}
-        <span class="legend-text">{{ add_table['cloudiness'][t] }}</span>
-      </div>
-      {% endfor %}
+  <div class="cloudiness-legend mobile">
+    <button class="legend-title" popovertarget="legend-wrapper">Легенда</button>
+    <div id="legend-wrapper" class="legend-wrapper" popover>
+      {% include 'observations/popover-legend.html' %}
     </div>
   </div>
   {% include 'observations/observations_table.html' %}
