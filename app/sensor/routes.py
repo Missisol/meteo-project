@@ -39,7 +39,7 @@ def bme280_rpi():
     return render_template('sensor/sensor_table.html', title='BME280 RPI', data=data.items, next_url=next_url, prev_url=prev_url, table=bme_rpi_table, filter_form=filter_form, start_date=start_date_str, end_date=end_date_str)
 
 
-@bp.route('/api/table/bme280_outer')
+@bp.route('/table/bme280_outer')
 def bme280_outer():
     """Return BME280 Outer data from db with pagination - for table"""
     filter_form = FilterForm()
@@ -61,7 +61,7 @@ def bme280_outer():
     return render_template('sensor/sensor_table.html', title='BME280 внешний', data=data.items, next_url=next_url, prev_url=prev_url, table=bme_outer_table, filter_form=filter_form, start_date=start_date_str, end_date=end_date_str)
 
 
-@bp.route('/api/table/dht22_outer')
+@bp.route('/table/dht22_outer')
 def dht22_outer():
     """Return DHT22 data from db with pagination - for table"""
     filter_form = FilterForm()
@@ -83,7 +83,7 @@ def dht22_outer():
     return render_template('sensor/sensor_table.html', title='DHT22', data=data.items, next_url=next_url, prev_url=prev_url, table=dht_outer_table, filter_form=filter_form, start_date=start_date_str, end_date=end_date_str)
 
 
-@bp.route('/api/table/bme_history')
+@bp.route('/table/bme_history')
 def bme_history():
     """Return BME History data with pagination - for table"""
     filter_form = FilterForm()

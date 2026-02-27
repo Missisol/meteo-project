@@ -40,7 +40,7 @@ def observations():
   return render_template('observations/observations.html', data=data.items, next_url=next_url, prev_url=prev_url, table=observations_table, add_table=observations_map, empty_form=empty_form, add_form=add_form, edit_form=edit_form, filter_form=filter_form, start_date=start_date_str, end_date=end_date_str)
 
 
-@bp.route('/api/observations/new', methods=['GET', 'POST'])
+@bp.route('/observations/new', methods=['GET', 'POST'])
 def create_observation():
     if request.method == 'POST':
         cloudiness = request.form.get('cloudiness', 'clear')
@@ -90,7 +90,7 @@ def delete_observation(id):
             db.session.commit()
             flash('Наблюдение успешно удалено', 'success')
             return redirect(url_for('observations.observations'))
-    return render_template('observations/observations.html')
+    # return render_template('observations/observations.html')
 
 
 @bp.route('/api/observations/<int:id>/data', methods=['GET'])
@@ -109,7 +109,7 @@ def get_observation_data(id):
     })
 
 
-@bp.route('/api/observations/update', methods=['POST'])
+@bp.route('/observations/update', methods=['POST'])
 def update_observation():
     id = request.form.get('id')
     if not id:
