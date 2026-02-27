@@ -67,14 +67,22 @@ function init() {
 
   if (deleteButtons.length && deleteDialog) {
     deleteButtons.forEach((button) => {
-      button.addEventListener('click', (e) => {
+      button.addEventListener('click', async (e) => {
         const id = e.currentTarget.dataset.id
         if (!id) return
         const form = deleteDialog.querySelector(`#delete-form`)
         if (form) {
           form.action = `/api/observations/${id}/delete`
         }
-         deleteDialog.showModal()
+        // Загружаем дату наблюдения для отображения
+        try {
+          const response = await fetch(`/api/observations/${id}/data`)
+          const data = await response.json()
+          deleteDialog.querySelector('#delete-date').textContent = data.created_at
+        } catch (error) {
+          console.error('Error fetching observation data:', error)
+        }
+        deleteDialog.showModal()
       })
     })
   }
