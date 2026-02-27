@@ -9,8 +9,10 @@ from app.models import Observations
 from app.utils.observations_data import observations_table, observations_map
 from app.observations.forms import EmptyForm, ObservationForm, EditForm
 from app.main.forms import FilterForm
-from app.utils.date_filters import local_date_to_utc_range, apply_date_filters
+from app.utils.date_filters import apply_date_filters
 
+
+# TODO добавить таблицу наблюдений + температуры
 
 @bp.route('/observations')
 def observations():
@@ -46,16 +48,11 @@ def create_observation():
         precipitation_rate = request.form.get('precipitation_rate', 'none')
         snow_depth = request.form.get('snow_depth', 0, type=int)
         created_at_str = request.form.get('created_at')
+        comment = request.form.get('comment')
         
         # Если дата введена пользователем, создаем из неё datetime как начало дня в UTC
         created_at = datetime.strptime(created_at_str, '%Y-%m-%d') if created_at_str else datetime.now(timezone.utc)
 
-        # if created_at_str:
-        #     # Если дата введена пользователем, создаем из неё datetime как начало дня в UTC
-        #     created_at = datetime.strptime(created_at_str, '%Y-%m-%d')
-        # else:
-        #     created_at = datetime.now(timezone.utc)
-        
         # Проверка на существование записи с такой же датой (без учета времени)
         query = sa.select(Observations).where(
             sa.func.date(Observations.created_at) == created_at.date()
@@ -72,6 +69,7 @@ def create_observation():
             precipitation_rate=precipitation_rate,
             snow_depth=snow_depth if snow_depth is not None else 0,
             created_at=created_at,
+            comment=comment if comment is not None else '',
         )
         
         db.session.add(observation)
@@ -79,7 +77,7 @@ def create_observation():
         flash('Наблюдение успешно добавлено', 'success')
         return redirect(url_for('observations.observations'))
     
-    return render_template('observations/observations.html')
+    # return render_template('observations/observations.html')
 
 
 @bp.route('/api/observations/<int:id>/delete', methods=['POST'])
@@ -106,7 +104,8 @@ def get_observation_data(id):
         'cloudiness': observation.cloudiness,
         'precipitation': observation.precipitation,
         'precipitation_rate': observation.precipitation_rate,
-        'snow_depth': observation.snow_depth
+        'snow_depth': observation.snow_depth,
+        'comment': observation.comment,
     })
 
 
@@ -114,16 +113,19 @@ def get_observation_data(id):
 def update_observation():
     id = request.form.get('id')
     if not id:
+        flash('ID is required', 'warning')
         return jsonify({'success': False, 'error': 'ID is required'})
     
     observation = db.session.get(Observations, id)
     if observation is None:
+        flash('Observation not found', 'warning')
         return jsonify({'success': False, 'error': 'Observation not found'})
     
     cloudiness = request.form.get('cloudiness')
     precipitation = request.form.get('precipitation')
     precipitation_rate = request.form.get('precipitation_rate')
     snow_depth = request.form.get('snow_depth', type=int)
+    comment = request.form.get('comment')
     
     if cloudiness:
         observation.cloudiness = cloudiness
@@ -133,6 +135,8 @@ def update_observation():
         observation.precipitation_rate = precipitation_rate
     if snow_depth is not None:
         observation.snow_depth = snow_depth
+    if comment is not None:
+        observation.comment = comment
     
     try:
         db.session.commit()
@@ -141,4 +145,5 @@ def update_observation():
 
     except Exception as e:
         db.session.rollback()
+        flash('Произошла ошибка при обновлении наблюдения', 'warning')
         return jsonify({'success': False, 'error': str(e)})

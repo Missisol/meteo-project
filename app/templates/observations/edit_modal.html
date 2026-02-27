@@ -1,3 +1,4 @@
+<!-- TODO обхединить с create_modal-->
 <dialog id="edit-dialog" class="dialog-modal dialog" closedby="any">
     {% with title='Редактировать наблюдение', commandfor='edit-dialog' %}
         {% include 'includes/form_heading.html' %}
@@ -23,6 +24,10 @@
         <div class="form-group">
             {{ edit_form.snow_depth.label() }}
             {{ edit_form.snow_depth(id="snow-depth", class="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ add_form.comment.label() }}
+            {{ add_form.comment(id="comment", class="form-control") }}
         </div>
         {{ edit_form.submit(class="button button--blue") }}
     </form>

@@ -32,10 +32,10 @@
                                         </span>
                                     </span>
                                 </td>   
-                            {% elif item == 'snow_depth' %}
+                            {% elif item == 'snow_depth' or item == 'comment' %}
                                 <td class="table__cell">
                                     <span class="data">
-                                        <span class="data__{{ item }} {{ d[item] }}">{{ d[item] }}</span>
+                                        <span class="data__{{ item }} {{ d[item] }}">{{ d[item] if d[item] is not none  else '' }}</span>
                                     </span>
                                 </td>
                             {% elif item == 'actions' %}

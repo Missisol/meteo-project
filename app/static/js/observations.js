@@ -21,6 +21,7 @@ async function getObservationData(id) {
     editDialog.querySelector('#precipitation').value = data.precipitation || 'none'
     editDialog.querySelector('#precipitation-rate').value = data.precipitation_rate || 'none'
     editDialog.querySelector('#snow-depth').value = data.snow_depth || 0
+    editDialog.querySelector('#comment').value = data.comment || ''
   } catch (error) {
     console.error('Error fetching observation data:', error)
     alert('Ошибка при загрузке данных записи')

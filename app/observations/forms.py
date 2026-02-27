@@ -4,13 +4,14 @@ from wtforms import StringField, SubmitField, SelectField, DateField, HiddenFiel
 from wtforms.validators import ValidationError, DataRequired, Length
 
 
+# TODO унифицировать формы - убрать повторение
 class ObservationForm(FlaskForm):
     created_at = DateField('Дата', default=datetime.date.today)
     cloudiness = SelectField('Облачность',
         choices=[
             ('clear', 'Ясно'),
             ('mostly_sunny', 'Преимущественно солнечно'),
-            ('cloudy', 'Облачно'),
+            ('cloudy', 'Переменная облачность'),
             ('mostly_cloudy', 'Преимущественно облачно'),
             ('overcast', 'Пасмурно')
         ],
@@ -33,6 +34,7 @@ class ObservationForm(FlaskForm):
         ])
     snow_depth = StringField('Высота снежного покрова, см', 
         validators=[Length(min=0, max=4)])
+    comment = StringField('Комментарий')
     submit = SubmitField('Добавить')
 
 class EditForm(FlaskForm):
@@ -41,7 +43,7 @@ class EditForm(FlaskForm):
         choices=[
             ('clear', 'Ясно'),
             ('mostly_sunny', 'Преимущественно солечно'),
-            ('cloudy', 'Облачно'),
+            ('cloudy', 'Переменная облачность'),
             ('mostly_cloudy', 'Преимущественно облачно'),
             ('overcast', 'Пасмурно')
         ],
@@ -64,6 +66,7 @@ class EditForm(FlaskForm):
         ])
     snow_depth = StringField('Высота снежного покрова, см', 
         validators=[Length(min=0, max=4)])
+    comment = StringField('Комментарий')
     submit = SubmitField('Сохранить')
 
 class EmptyForm(FlaskForm):

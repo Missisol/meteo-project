@@ -1,12 +1,12 @@
 observations_table = {
-  'th': ['Дата', 'Облачность', 'Осадки', 'Интенсивность осадков', 'Величина снежного покрова, см', 'Действия'],
-  'td': ['created_at', 'cloudiness', 'precipitation', 'precipitation_rate', 'snow_depth', 'actions']
+  'th': ['Дата', 'Облачность', 'Осадки', 'Интенсивность осадков', 'Высота снежного покрова, см', 'Комментарий',  'Действия'],
+  'td': ['created_at', 'cloudiness', 'precipitation', 'precipitation_rate', 'snow_depth', 'comment', 'actions']
 }
 
 cloudiness_map = {
   'clear': 'ясно',
   'mostly_sunny': 'преимущественно солечно',
-  'cloudy': 'облачно',
+  'cloudy': 'переменная облачность',
   'mostly_cloudy': 'преимущественно облачно',
   'overcast': 'пасмурно',
 }
