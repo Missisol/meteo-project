@@ -5,7 +5,7 @@ observations_table = {
 
 cloudiness_map = {
   'clear': 'ясно',
-  'mostly_sunny': 'преимущественно солечно',
+  'mostly_sunny': 'преимущественно солнечно',
   'cloudy': 'переменная облачность',
   'mostly_cloudy': 'преимущественно облачно',
   'overcast': 'пасмурно',

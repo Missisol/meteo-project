@@ -17,11 +17,11 @@ async function getObservationData(id) {
     const response = await fetch(`/api/observations/${id}/data`)
     const data = await response.json()
     editDialog.querySelector('#created-at').textContent = data.created_at
-    editDialog.querySelector('#cloudiness').value = data.cloudiness || 'clear'
-    editDialog.querySelector('#precipitation').value = data.precipitation || 'none'
-    editDialog.querySelector('#precipitation-rate').value = data.precipitation_rate || 'none'
-    editDialog.querySelector('#snow-depth').value = data.snow_depth || 0
-    editDialog.querySelector('#comment').value = data.comment || ''
+    editDialog.querySelector('#cloudiness').value = data?.cloudiness || 'clear'
+    editDialog.querySelector('#precipitation').value = data?.precipitation || 'none'
+    editDialog.querySelector('#precipitation_rate').value = data?.precipitation_rate || 'none'
+    editDialog.querySelector('#snow_depth').value = data?.snow_depth || 0
+    editDialog.querySelector('#comment').value = data?.comment || ''
   } catch (error) {
     console.error('Error fetching observation data:', error)
     alert('Ошибка при загрузке данных записи')

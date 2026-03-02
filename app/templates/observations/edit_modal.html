@@ -1,4 +1,3 @@
-<!-- TODO объединить с create_modal-->
 <dialog id="edit-dialog" class="dialog-modal dialog" closedby="any">
     {% with title='Редактировать наблюдение', commandfor='edit-dialog' %}
         {% include 'includes/form_heading.html' %}
@@ -9,26 +8,9 @@
             <p>Дата</p>
             <p id="created-at" name="created_at"></p>
         </div>
-        <div class="form-group">
-            {{ edit_form.cloudiness.label() }}
-            {{ edit_form.cloudiness(id="cloudiness", class="form-control") }}
-        </div>
-        <div class="form-group">
-            {{ edit_form.precipitation.label() }}
-            {{ edit_form.precipitation(id="precipitation", class="form-control") }}
-        </div>
-        <div class="form-group">
-            {{ edit_form.precipitation_rate.label() }}
-            {{ edit_form.precipitation_rate(id="precipitation-rate", class="form-control") }}
-        </div>
-        <div class="form-group">
-            {{ edit_form.snow_depth.label() }}
-            {{ edit_form.snow_depth(id="snow-depth", class="form-control") }}
-        </div>
-        <div class="form-group">
-            {{ add_form.comment.label() }}
-            {{ add_form.comment(id="comment", class="form-control") }}
-        </div>
+        {% with form = edit_form %}
+            {% include 'observations/_observation_form_fields.html' %}
+        {% endwith %}
         {{ edit_form.submit(class="button button--blue") }}
     </form>
 </dialog>
