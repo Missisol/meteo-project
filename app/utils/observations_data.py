@@ -31,3 +31,8 @@ observations_map = {
   'precipitation': precipitation_map,
   'precipitation_rate': precipitation_rate_map,
 }
+
+combined_observations_table = {
+  'th': ['Дата', 'Облачность', 'Осадки', 'Интенсивность осадков', 'Высота снежного покрова, см', 'Мин. темп., °C', 'Макс. темп., °C', 'Комментарий'],
+  'td': ['date', 'cloudiness', 'precipitation', 'precipitation_rate', 'snow_depth', 'min_temperature', 'max_temperature', 'comment']
+}

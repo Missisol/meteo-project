@@ -5,14 +5,12 @@ from datetime import datetime, timezone
 
 from app import db
 from app.observations import bp
-from app.models import Observations
+from app.models import Observations, BmeHistory
 from app.utils.observations_data import observations_table, observations_map
 from app.observations.forms import EmptyForm, ObservationForm, EditForm
 from app.main.forms import FilterForm
 from app.utils.date_filters import apply_date_filters
 
-
-# TODO добавить таблицу наблюдений + температуры
 
 @bp.route('/observations')
 def observations():
@@ -147,3 +145,93 @@ def update_observation():
         db.session.rollback()
         flash('Произошла ошибка при обновлении наблюдения', 'warning')
         return jsonify({'success': False, 'error': str(e)})
+
+
+@bp.route('/table/observations_combined')
+def observations_combined():
+    from datetime import datetime, timezone
+    import sqlalchemy as sa
+    from app.utils.date_filters import apply_date_filters
+    from app.utils.observations_data import combined_observations_table
+    
+    filter_form = FilterForm()
+    
+    # Получаем параметры пагинации
+    page = request.args.get('page', 1, type=int)
+    
+   # Запрос для объединения данных из двух таблиц
+    # Используем LEFT JOIN, чтобы показать все наблюдения, даже если нет данных о температуре
+    # Важно: используем select_from для корректного объединения моделей
+    query = sa.select(Observations, BmeHistory).select_from(
+        Observations
+    ).outerjoin(
+        BmeHistory,
+        sa.func.date(Observations.created_at) == sa.func.date(BmeHistory.date)
+    ).order_by(Observations.created_at.desc())
+    
+    # Применяем фильтры по дате
+    query, url_args, start_date_str, end_date_str, start_date, end_date = apply_date_filters(
+        query, Observations, filter_form, current_app.config['TIMEZONE'], 'datetime'
+    )
+    
+    # Добавляем дополнительную фильтрацию для исключения сегодняшней даты (нужны только предыдущие дни)
+    today_start = datetime.now(timezone.utc).date()
+    query = query.filter(sa.func.date(Observations.created_at) < today_start)
+    
+    # Выполняем запрос с пагинацией
+    # Используем execute + paginate для корректной работы с составными запросами
+    paginated = db.paginate(query, page=page, per_page=current_app.config['ITEMS_PER_PAGE'], error_out=False)
+    
+    # Получаем ID записей для ручной пагинации
+    # Это необходимо, так как select с двумя моделями может некорректно обрабатываться
+    obs_ids = [row.id for row in paginated.items]
+    
+    # Выполняем отдельный запрос для получения данных с JOIN
+    if obs_ids:
+        data_query = sa.select(Observations, BmeHistory).select_from(
+            Observations
+        ).outerjoin(
+            BmeHistory,
+            sa.func.date(Observations.created_at) == sa.func.date(BmeHistory.date)
+        ).where(Observations.id.in_(obs_ids)).order_by(Observations.created_at.desc())
+        
+        rows = db.session.execute(data_query).all()
+    else:
+        rows = []
+    
+    # Преобразуем результаты в нужный формат
+    combined_data = []
+    for row in rows:
+        # row - это кортеж (observations_instance, bme_history_instance)
+        obs, bme = row
+        
+        # Извлекаем дату из наблюдения (берем только дату, без времени)
+        obs_date = obs.created_at.date()
+        
+        # Формируем объект с объединенными данными
+        combined_item = {
+            'date': obs_date,
+            'cloudiness': obs.cloudiness,
+            'precipitation': obs.precipitation,
+            'precipitation_rate': obs.precipitation_rate,
+            'snow_depth': obs.snow_depth,
+            'comment': obs.comment,
+            'min_temperature': bme.min_temperature if bme else None,
+            'max_temperature': bme.max_temperature if bme else None
+        }
+        combined_data.append(combined_item)
+    
+    next_url = url_for('observations.observations_combined', page=paginated.next_num, **url_args) \
+        if paginated.has_next else None
+    prev_url = url_for('observations.observations_combined', page=paginated.prev_num, **url_args) \
+        if paginated.has_prev else None
+
+    return render_template('observations/observations_combined.html',
+                          data=combined_data,
+                          next_url=next_url,
+                          prev_url=prev_url,
+                          table=combined_observations_table,
+                          filter_form=filter_form,
+                          start_date=start_date_str,
+                          end_date=end_date_str,
+                          add_table=observations_map)
