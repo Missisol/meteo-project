@@ -250,4 +250,8 @@ dialog[open]::backdrop,
     gap: var(--gap8);
     align-items: center;
     margin-block-end: var(--gap8);
+
+    &.controls--observations {
+        margin-block-start: var(--gap8);
+    }
 }
