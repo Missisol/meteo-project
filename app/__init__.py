@@ -72,9 +72,11 @@ def create_app(config_class=Config):
     app.last_dht22_save = None
 
     def on_message_from_bme280(client, userdata, message):
-        print(f"{message.topic} {message.payload}")
+        # print(f"{message.topic} {message.payload}")
+        app.logger.info(f"BME280 MQTT message received: {message.topic} {message.payload}")
         if message.topic == app.config['MQTT_TOPIC_BME280']:
-            print("BME readings update")
+            # print("BME readings update")
+            app.logger.info("BME280 readings update received")
             socketio.emit('bme_message', message.payload.decode())
 
             data = ast.literal_eval(message.payload.decode())
@@ -82,6 +84,8 @@ def create_app(config_class=Config):
             temperature_val = float(data['temperature'])
             humidity_val = float(data['humidity'])
             pressure_val = round(int(data['pressure']))
+
+            app.logger.info(f"BME280 parsed values: temperature={temperature_val}, humidity={humidity_val}, pressure={pressure_val}")
 
             # Always update latest data
             app.latest_bme280_data = {
@@ -105,7 +109,8 @@ def create_app(config_class=Config):
                 mod = models.Bme280Outer(temperature=temperature_val, humidity=humidity_val, pressure=pressure_val)
                 save_on_db(mod)
                 app.last_bme280_save = now
-                print(f"BME280 data saved to DB at {now} for hour slot starting {current_hour_slot}")
+                # print(f"BME280 data saved to DB at {now} for hour slot starting {current_hour_slot}")
+                app.logger.info(f"BME280 data saved to DB at {now} for hour slot starting {current_hour_slot}")
 
                 try:
                     send_to_telegram(f'Данные на: {datetime.now().strftime("%d.%m.%Y, %H:%M")}, Температура: {temperature_val}, Влажность: {humidity_val}, Давление: {pressure_val}')
@@ -113,10 +118,11 @@ def create_app(config_class=Config):
                     app.logger.error(f"Failed to send Telegram message: {e}")
 
             elif should_save:
-                print('Sensor data error for saving')
+                # print('Sensor data error for saving')
+                app.logger.warning(f"BME280 sensor data error for saving: temperature={temperature_val}, humidity={humidity_val}, pressure={pressure_val}")
             else:
-                print(f"BME280 data received but not saved (last save: {app.last_bme280_save}, current hour slot: {current_hour_slot})")
-
+                # print(f"BME280 data received but not saved (last save: {app.last_bme280_save}, current hour slot: {current_hour_slot})")
+                app.logger.info(f"BME280 data received but not saved (last save: {app.last_bme280_save}, current hour slot: {current_hour_slot}")
             # Вариант с установкой произвольного интервала времени между сохранениями в базе
             # Only save to DB if some minutes have passed since last save
             # now = datetime.now()
@@ -141,9 +147,11 @@ def create_app(config_class=Config):
 
 
     def on_message_from_dht22(client, userdata, message):
-        print(f"{message.topic} {message.payload}")
+        # print(f"{message.topic} {message.payload}")
+        app.logger.info(f"DHT22 MQTT message received: {message.topic} {message.payload}")
         if message.topic == app.config['MQTT_TOPIC_DHT22']:
-            print("DHT readings update")
+            # print("DHT readings update")
+            app.logger.info("DHT22 readings update received")
             socketio.emit('dht_message', message.payload.decode())
 
             data = ast.literal_eval(message.payload.decode())
@@ -151,6 +159,8 @@ def create_app(config_class=Config):
             humidity_1 = float(data['humidity1'])
             temperature_2 = float(data['temperature2'])
             humidity_2 = float(data['humidity2'])
+
+            app.logger.info(f"DHT22 parsed values: temperature1={temperature_1}, humidity1={humidity_1}, temperature2={temperature_2}, humidity2={humidity_2}")
 
             # Always update latest data
             app.latest_dht22_data = {
@@ -182,9 +192,11 @@ def create_app(config_class=Config):
                 mod = models.Dht22(temperature1=app.latest_dht22_data['temperature1'], humidity1=app.latest_dht22_data['humidity1'], temperature2=app.latest_dht22_data['temperature2'], humidity2=app.latest_dht22_data['humidity2'], created_at=app.latest_dht22_data['created_at'])
                 save_on_db(mod)
                 app.last_dht22_save = now
-                print(f"DHT22 data saved to DB at {now} for slot starting {current_slot}")
+                # print(f"DHT22 data saved to DB at {now} for slot starting {current_slot}")
+                app.logger.info(f"DHT22 data saved to DB at {now} for slot starting {current_slot}")
             else:
-                print(f"DHT22 data received but not saved (last save: {app.last_dht22_save}, current slot: {current_slot})")
+                # print(f"DHT22 data received but not saved (last save: {app.last_dht22_save}, current slot: {current_slot})")
+                app.logger.info(f"DHT22 data received but not saved (last save: {app.last_dht22_save}, current slot: {current_slot})")
 
 
     def save_on_db(data):
