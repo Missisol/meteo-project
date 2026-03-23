@@ -2,15 +2,14 @@ import json
 import logging
 import os
 import threading
-import time
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from typing import Optional
 
-import requests
 from paho.mqtt import client as mqtt
 
 from app import db, models, socketio
+from app.sensor import telegram_sender
 
 logger = logging.getLogger(__name__)
 
@@ -29,8 +28,6 @@ class SensorConfig:
     broker_port: int = 1883
     topic_bme280: str = ''
     topic_dht22: str = ''
-    bot_token: str = ''
-    chat_id: str = ''
 
 
 @dataclass
@@ -69,8 +66,6 @@ class MQTTSensorClient:
             broker_port=1883,
             topic_bme280=os.environ['MQTT_TOPIC_BME280'],
             topic_dht22=os.environ['MQTT_TOPIC_DHT22'],
-            bot_token=self.app.config.get('BOT_TOKEN', ''),
-            chat_id=self.app.config.get('CHAT_ID', ''),
         )
 
     # --- Обработчики MQTT ---
@@ -241,7 +236,7 @@ class MQTTSensorClient:
         logger.info(f"BME280 saved: T={temperature}, H={humidity}, P={pressure}")
         
         # Отправка в Telegram
-        self._send_telegram_notification(temperature, humidity, pressure)
+        telegram_sender.get_telegram_sender().send_notification(temperature, humidity, pressure)
 
     def _save_dht22(self):
         """Сохранение данных DHT22."""
@@ -280,37 +275,6 @@ class MQTTSensorClient:
             db.session.add(record)
             db.session.commit()
 
-    def _send_telegram_notification(self, temperature: float, humidity: float, pressure: int):
-        """Отправка уведомления в Telegram."""
-        if not self._config.bot_token or not self._config.chat_id:
-            logger.debug("Telegram not configured, skipping notification")
-            return
-            
-        text = (f"Данные на: {datetime.now().strftime('%d.%m.%Y, %H:%M')}\n"
-                f"Температура: {temperature}°C\n"
-                f"Влажность: {humidity}%\n"
-                f"Давление: {pressure} гПа")
-        
-        self._send_to_telegram(text)
-
-    def _send_to_telegram(self, text: str, max_retries: int = 3, retry_delay: int = 10):
-        """Отправка сообщения в Telegram с повторными попытками."""
-        url = f"https://api.telegram.org/bot{self._config.bot_token}/sendMessage"
-        payload = {'chat_id': self._config.chat_id, 'text': text}
-
-        for attempt in range(max_retries):
-            try:
-                response = requests.post(url, json=payload, timeout=10)
-                response.raise_for_status()
-                return True
-            except requests.RequestException as e:
-                logger.warning(f"Telegram attempt {attempt + 1} failed: {e}")
-                if attempt < max_retries - 1:
-                    time.sleep(retry_delay)
-        
-        logger.error(f"Failed to send Telegram message after {max_retries} attempts")
-        return False
-
     # --- Запуск MQTT ---
 
     def _mqtt_loop(self):
@@ -335,6 +299,7 @@ _mqtt_client: Optional[MQTTSensorClient] = None
 def init_mqtt(flask_app):
     """Инициализация MQTT клиента."""
     global _mqtt_client
+    telegram_sender.init_telegram(flask_app)
     _mqtt_client = MQTTSensorClient(flask_app)
     _mqtt_client.init()
 
