@@ -33,10 +33,7 @@ class TelegramSender:
             logger.debug("Telegram not configured, skipping notification")
             return False
             
-        text = (f"Данные на: {datetime.now().strftime('%d.%m.%Y, %H:%M')}\n"
-                f"Температура: {temperature}°C\n"
-                f"Влажность: {humidity}%\n"
-                f"Давление: {pressure} гПа")
+        text = (f"Данные на: {datetime.now().strftime('%d.%m.%Y, %H:%M')}, Температура: {temperature}°C, Влажность: {humidity}%, Давление: {pressure} мм.рт.ст")
         
         return self._send_message(text)
 
