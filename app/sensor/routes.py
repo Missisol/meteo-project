@@ -7,7 +7,7 @@ from app.models import Bme280Rpi, Bme280Outer, Dht22, BmeHistory
 from app.utils.sensor_data import bme_rpi_table, bme_outer_table, dht_outer_table, history_table
 from app.main.forms import FilterForm
 from app.utils.date_filters import apply_date_filters
-
+from app.sensor.sensor_mqtt import get_mqtt_client
 from app.sensor.sensor_rpi import BME280Module
 bme = BME280Module()
 
@@ -180,7 +180,12 @@ def get_bme280_latest_data():
 @bp.route('/api/bme280_mqtt')
 def get_bme280_mqtt_data():
     """Return the latest BME280 data from MQTT callbacks"""
-    latest_data = current_app.latest_bme280_data
+    try:
+        mqtt_client = get_mqtt_client()
+        latest_data = mqtt_client._state.latest_bme280
+    except RuntimeError:
+        latest_data = None
+    
     if latest_data:
         created_at = latest_data['created_at']
         return jsonify(
@@ -232,7 +237,12 @@ def get_dht22_latest_data():
 @bp.route('/api/dht22_mqtt')
 def get_dht22_mqtt_data():
     """Return the latest DHT22 data from MQTT callbacks"""
-    latest_data = current_app.latest_dht22_data
+    try:
+        mqtt_client = get_mqtt_client()
+        latest_data = mqtt_client._state.latest_dht22
+    except RuntimeError:
+        latest_data = None
+    
     if latest_data:
         created_at = latest_data['created_at']
         return jsonify(
