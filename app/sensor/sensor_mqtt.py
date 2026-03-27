@@ -28,6 +28,7 @@ class SensorConfig:
     broker_port: int = 1883
     topic_bme280: str = ''
     topic_dht22: str = ''
+    mqtt_client_id: str = 'sensor'
 
 
 @dataclass
@@ -66,6 +67,7 @@ class MQTTSensorClient:
             broker_port=1883,
             topic_bme280=os.environ['MQTT_TOPIC_BME280'],
             topic_dht22=os.environ['MQTT_TOPIC_DHT22'],
+            mqtt_client_id=os.environ.get('MQTT_CLIENT_ID', 'sensor'),
         )
 
     # --- Обработчики MQTT ---
@@ -284,7 +286,7 @@ class MQTTSensorClient:
 
     def _start_mqtt_client(self):
         """Запуск MQTT клиента в фоновом потоке."""
-        self._mqttc = mqtt.Client(client_id="sensor", clean_session=True)
+        self._mqttc = mqtt.Client(client_id=self._config.mqtt_client_id, clean_session=True)
         self._mqttc.on_connect = self._on_connect
         self._mqttc.on_message = self._on_message
         
