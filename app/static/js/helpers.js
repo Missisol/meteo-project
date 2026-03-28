@@ -19,3 +19,11 @@ export function formatDate(date) {
     const seconds = String(date.getSeconds()).padStart(2, '0')
     return `${day}.${month}.${year}, ${hours}:${minutes}:${seconds}`
 }
+
+export const timer = 1000 * 60 * 5
+
+export const postfixBme = ['temperature', 'pressure', 'humidity', 'date']
+
+export const postfixDht = ['temperature', 'humidity', 'date']
+
+

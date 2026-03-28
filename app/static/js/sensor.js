@@ -1,10 +1,13 @@
+import { api } from "./api.js"
+import { postfixBme, postfixDht, timer } from "./helpers.js"
+
 const rpiT = document.querySelector('#rpi-temperature')
 const bmeT = document.querySelector('#bme-temperature')
 const dht1T = document.querySelector('#dht1-temperature')
 
-const timer = 1000 * 60 * 5
-const postfixBme = ['temperature', 'pressure', 'humidity', 'date']
-const postfixDht = ['temperature', 'humidity', 'date']
+// const timer = 1000 * 60 * 5
+// const postfixBme = ['temperature', 'pressure', 'humidity', 'date']
+// const postfixDht = ['temperature', 'humidity', 'date']
 
 let MQTT_CONFIG = {
     mqtt_broker_url: 'localhost',
@@ -20,7 +23,7 @@ let mqttClient = null
 
 async function loadConfig() {
     try {
-        const res = await fetch('/api/config')
+        const res = await fetch(api.config)
         if (!res.ok) throw new Error('Config fetch failed')
         MQTT_CONFIG = await res.json()
         MQTT_URL = `ws://${MQTT_CONFIG.mqtt_broker_url}:${MQTT_CONFIG.ws_broker_port}`
@@ -104,23 +107,23 @@ async function getSensorData(url, prefix, postfix) {
 
 async function checkContent() {
     if (dht1T && !dht1T.innerText) {
-        const res = await getSensorData('/api/dht22_mqtt', ['dht1', 'dht2'], postfixDht)
+        const res = await getSensorData(api.dht22_mqtt, ['dht1', 'dht2'], postfixDht)
         
         if (!res.created_at) {
-             getSensorData('/api/dht22_db', ['dht1', 'dht2'], postfixDht)
+             getSensorData(api.dht22_db, ['dht1', 'dht2'], postfixDht)
         }
     }
     if (bmeT && !bmeT.innerText) {
-        const res = await getSensorData('/api/bme280_mqtt', 'bme', postfixBme)
+        const res = await getSensorData(api.bme280_mqtt, 'bme', postfixBme)
         if (!res.created_at) {
-             getSensorData('/api/bme280_db', 'bme', postfixBme)
+             getSensorData(api.bme280_db, 'bme', postfixBme)
         }
     } 
 }
 
 function loop() {
     setTimeout(() => {
-        getSensorData('/api/bme280_rpi', 'rpi', postfixBme)
+        getSensorData(api.bme280_rpi, 'rpi', postfixBme)
         loop()
     }, timer)
   }
@@ -130,7 +133,7 @@ function init() {
     // Подключение к MQTT через WebSocket
     connectMQTT()
     if (rpiT) {
-    getSensorData('/api/bme280_rpi', 'rpi', postfixBme)
+    getSensorData(api.bme280_rpi, 'rpi', postfixBme)
     loop()
     }
 }

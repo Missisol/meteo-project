@@ -1,3 +1,5 @@
+import { api } from "./api.js"
+
 // create dialog
 const createDialog = document.querySelector('#create-dialog') // диалог создания
 const createButton = document.querySelector('#create-button') // кнопка открытия диалога
@@ -14,7 +16,7 @@ const closeEditDialog = document.querySelector('#edit-close') // кнопка з
 async function getObservationData(id) {
   editDialog.querySelector('#editId').value = id
   try {
-    const response = await fetch(`/api/observations/${id}/data`)
+    const response = await fetch(`${api.observations}/${id}/data`)
     const data = await response.json()
     editDialog.querySelector('#created-at').textContent = data.created_at
     editDialog.querySelector('#cloudiness').value = data?.cloudiness || 'clear'
@@ -72,11 +74,11 @@ function init() {
         if (!id) return
         const form = deleteDialog.querySelector(`#delete-form`)
         if (form) {
-          form.action = `/api/observations/${id}/delete`
+          form.action = `${api.observations}/${id}/delete`
         }
         // Загружаем дату наблюдения для отображения
         try {
-          const response = await fetch(`/api/observations/${id}/data`)
+          const response = await fetch(`${api.observations}/${id}/data`)
           const data = await response.json()
           deleteDialog.querySelector('#delete-date').textContent = data.created_at
         } catch (error) {
