@@ -13,16 +13,17 @@
 - Если файервол (UFW) включен, должен быть открыт доступ к портам, на которых будет открываться проект, и к порту 1883
 
 #### Mosquitto MQTT Broker
-- Mожно использовать Mosquitto Brocker, установленный на Raspberry Pi[^2][^3]:    
+- Mожно использовать Mosquitto Broker, установленный на Raspberry Pi[^2][^3]:    
     - установка Mosquitto Broker на Raspberry Pi
     `sudo apt install -y mosquitto mosquitto-clients`
     - настройка автоматического запуска Mosquitto Broker при загрузке RPI - `sudo systemctl enable mosquitto.service`
     - для удаленного доступа без аутентификации в конфигурационный файл /etc/mosquitto/mosquitto.conf добавить:
         `allow_anonymous true`  
         `listener 1883 0.0.0.0`  
-    - Можно использовать Mosquitto Brocker в докер-контейнере[^4]:
+    - Можно использовать Mosquitto Broker в докер-контейнере[^4]:
     - создать файл mosquitto.conf в домашней директории
     - запустить Mosquitto Broker в контейнере  - `docker run -d --restart always --name <name> -p 1883:1883 -v $HOME/mosquitto.conf:/mosquitto/config/mosquitto.conf eclipse-mosquitto:2`
+    - или с compose.yaml - `docker compose up -d`
 
 #### Расписание задач с Cron[^6]
 - Настройка расписания выполнения задач с использованием Cron[^7][^8] 
@@ -83,7 +84,7 @@ ___
 
 [^1]: [Flask Mega-Tutorial](https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-i-hello-world)
 [^2]: [ESP8266 Publishing DHT22 Readings with MQTT to Raspberry Pi](https://randomnerdtutorials.com/esp8266-publishing-dht22-readings-with-mqtt-to-raspberry-pi/)
-[^3]: [Mosquitto Brocker settings](https://randomnerdtutorials.com/how-to-install-mosquitto-broker-on-raspberry-pi/)
+[^3]: [Mosquitto Broker settings](https://randomnerdtutorials.com/how-to-install-mosquitto-broker-on-raspberry-pi/)
 [^4]: [How to Configure Mosquitto MQTT Broker in Docker](https://cedalo.com/blog/mosquitto-docker-configuration-ultimate-guide/)
 [^5]: [Setting Up Gunicorn and Supervisor](https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-xvii-deployment-on-linux)
 [^6]: [Flask regularly scheduled jobs with Cron](https://blog.miguelgrinberg.com/post/run-your-flask-regularly-scheduled-jobs-with-cron)
