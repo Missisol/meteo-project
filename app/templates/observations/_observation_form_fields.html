@@ -1,0 +1,21 @@
+{# Общие поля формы наблюдения. Принимает переменную `form` #}
+<div class="form-group">
+    {{ form.cloudiness.label() }}
+    {{ form.cloudiness(class="form-control") }}
+</div>
+<div class="form-group">
+    {{ form.precipitation.label() }}
+    {{ form.precipitation(class="form-control") }}
+</div>
+<div class="form-group">
+    {{ form.precipitation_rate.label() }}
+    {{ form.precipitation_rate(class="form-control") }}
+</div>
+<div class="form-group">
+    {{ form.snow_depth.label() }}
+    {{ form.snow_depth(class="form-control") }}
+</div>
+<div class="form-group">
+    {{ form.comment.label() }}
+    {{ form.comment(class="form-control") }}
+</div>

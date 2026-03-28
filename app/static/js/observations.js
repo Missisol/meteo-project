@@ -17,10 +17,11 @@ async function getObservationData(id) {
     const response = await fetch(`/api/observations/${id}/data`)
     const data = await response.json()
     editDialog.querySelector('#created-at').textContent = data.created_at
-    editDialog.querySelector('#cloudiness').value = data.cloudiness || 'clear'
-    editDialog.querySelector('#precipitation').value = data.precipitation || 'none'
-    editDialog.querySelector('#precipitation-rate').value = data.precipitation_rate || 'none'
-    editDialog.querySelector('#snow-depth').value = data.snow_depth || 0
+    editDialog.querySelector('#cloudiness').value = data?.cloudiness || 'clear'
+    editDialog.querySelector('#precipitation').value = data?.precipitation || 'none'
+    editDialog.querySelector('#precipitation_rate').value = data?.precipitation_rate || 'none'
+    editDialog.querySelector('#snow_depth').value = data?.snow_depth || 0
+    editDialog.querySelector('#comment').value = data?.comment || ''
   } catch (error) {
     console.error('Error fetching observation data:', error)
     alert('Ошибка при загрузке данных записи')
@@ -66,14 +67,22 @@ function init() {
 
   if (deleteButtons.length && deleteDialog) {
     deleteButtons.forEach((button) => {
-      button.addEventListener('click', (e) => {
+      button.addEventListener('click', async (e) => {
         const id = e.currentTarget.dataset.id
         if (!id) return
         const form = deleteDialog.querySelector(`#delete-form`)
         if (form) {
           form.action = `/api/observations/${id}/delete`
         }
-         deleteDialog.showModal()
+        // Загружаем дату наблюдения для отображения
+        try {
+          const response = await fetch(`/api/observations/${id}/data`)
+          const data = await response.json()
+          deleteDialog.querySelector('#delete-date').textContent = data.created_at
+        } catch (error) {
+          console.error('Error fetching observation data:', error)
+        }
+        deleteDialog.showModal()
       })
     })
   }

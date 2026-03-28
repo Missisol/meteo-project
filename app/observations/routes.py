@@ -5,11 +5,11 @@ from datetime import datetime, timezone
 
 from app import db
 from app.observations import bp
-from app.models import Observations
+from app.models import Observations, BmeHistory
 from app.utils.observations_data import observations_table, observations_map
 from app.observations.forms import EmptyForm, ObservationForm, EditForm
 from app.main.forms import FilterForm
-from app.utils.date_filters import local_date_to_utc_range, apply_date_filters
+from app.utils.date_filters import apply_date_filters
 
 
 @bp.route('/observations')
@@ -38,7 +38,7 @@ def observations():
   return render_template('observations/observations.html', data=data.items, next_url=next_url, prev_url=prev_url, table=observations_table, add_table=observations_map, empty_form=empty_form, add_form=add_form, edit_form=edit_form, filter_form=filter_form, start_date=start_date_str, end_date=end_date_str)
 
 
-@bp.route('/api/observations/new', methods=['GET', 'POST'])
+@bp.route('/observations/new', methods=['GET', 'POST'])
 def create_observation():
     if request.method == 'POST':
         cloudiness = request.form.get('cloudiness', 'clear')
@@ -46,16 +46,11 @@ def create_observation():
         precipitation_rate = request.form.get('precipitation_rate', 'none')
         snow_depth = request.form.get('snow_depth', 0, type=int)
         created_at_str = request.form.get('created_at')
+        comment = request.form.get('comment')
         
         # Если дата введена пользователем, создаем из неё datetime как начало дня в UTC
         created_at = datetime.strptime(created_at_str, '%Y-%m-%d') if created_at_str else datetime.now(timezone.utc)
 
-        # if created_at_str:
-        #     # Если дата введена пользователем, создаем из неё datetime как начало дня в UTC
-        #     created_at = datetime.strptime(created_at_str, '%Y-%m-%d')
-        # else:
-        #     created_at = datetime.now(timezone.utc)
-        
         # Проверка на существование записи с такой же датой (без учета времени)
         query = sa.select(Observations).where(
             sa.func.date(Observations.created_at) == created_at.date()
@@ -72,6 +67,7 @@ def create_observation():
             precipitation_rate=precipitation_rate,
             snow_depth=snow_depth if snow_depth is not None else 0,
             created_at=created_at,
+            comment=comment if comment is not None else '',
         )
         
         db.session.add(observation)
@@ -79,7 +75,7 @@ def create_observation():
         flash('Наблюдение успешно добавлено', 'success')
         return redirect(url_for('observations.observations'))
     
-    return render_template('observations/observations.html')
+    # return render_template('observations/observations.html')
 
 
 @bp.route('/api/observations/<int:id>/delete', methods=['POST'])
@@ -92,7 +88,7 @@ def delete_observation(id):
             db.session.commit()
             flash('Наблюдение успешно удалено', 'success')
             return redirect(url_for('observations.observations'))
-    return render_template('observations/observations.html')
+    # return render_template('observations/observations.html')
 
 
 @bp.route('/api/observations/<int:id>/data', methods=['GET'])
@@ -106,24 +102,28 @@ def get_observation_data(id):
         'cloudiness': observation.cloudiness,
         'precipitation': observation.precipitation,
         'precipitation_rate': observation.precipitation_rate,
-        'snow_depth': observation.snow_depth
+        'snow_depth': observation.snow_depth,
+        'comment': observation.comment,
     })
 
 
-@bp.route('/api/observations/update', methods=['POST'])
+@bp.route('/observations/update', methods=['POST'])
 def update_observation():
     id = request.form.get('id')
     if not id:
+        flash('ID is required', 'warning')
         return jsonify({'success': False, 'error': 'ID is required'})
     
     observation = db.session.get(Observations, id)
     if observation is None:
+        flash('Observation not found', 'warning')
         return jsonify({'success': False, 'error': 'Observation not found'})
     
     cloudiness = request.form.get('cloudiness')
     precipitation = request.form.get('precipitation')
     precipitation_rate = request.form.get('precipitation_rate')
     snow_depth = request.form.get('snow_depth', type=int)
+    comment = request.form.get('comment')
     
     if cloudiness:
         observation.cloudiness = cloudiness
@@ -133,6 +133,8 @@ def update_observation():
         observation.precipitation_rate = precipitation_rate
     if snow_depth is not None:
         observation.snow_depth = snow_depth
+    if comment is not None:
+        observation.comment = comment
     
     try:
         db.session.commit()
@@ -141,4 +143,95 @@ def update_observation():
 
     except Exception as e:
         db.session.rollback()
+        flash('Произошла ошибка при обновлении наблюдения', 'warning')
         return jsonify({'success': False, 'error': str(e)})
+
+
+@bp.route('/table/observations_combined')
+def observations_combined():
+    from datetime import datetime, timezone
+    import sqlalchemy as sa
+    from app.utils.date_filters import apply_date_filters
+    from app.utils.observations_data import combined_observations_table
+    
+    filter_form = FilterForm()
+    
+    # Получаем параметры пагинации
+    page = request.args.get('page', 1, type=int)
+    
+   # Запрос для объединения данных из двух таблиц
+    # Используем LEFT JOIN, чтобы показать все наблюдения, даже если нет данных о температуре
+    # Важно: используем select_from для корректного объединения моделей
+    query = sa.select(Observations, BmeHistory).select_from(
+        Observations
+    ).outerjoin(
+        BmeHistory,
+        sa.func.date(Observations.created_at) == sa.func.date(BmeHistory.date)
+    ).order_by(Observations.created_at.desc())
+    
+    # Применяем фильтры по дате
+    query, url_args, start_date_str, end_date_str, start_date, end_date = apply_date_filters(
+        query, Observations, filter_form, current_app.config['TIMEZONE'], 'datetime'
+    )
+    
+    # Добавляем дополнительную фильтрацию для исключения сегодняшней даты (нужны только предыдущие дни)
+    today_start = datetime.now(timezone.utc).date()
+    query = query.filter(sa.func.date(Observations.created_at) < today_start)
+    
+    # Выполняем запрос с пагинацией
+    # Используем execute + paginate для корректной работы с составными запросами
+    paginated = db.paginate(query, page=page, per_page=current_app.config['ITEMS_PER_PAGE'], error_out=False)
+    
+    # Получаем ID записей для ручной пагинации
+    # Это необходимо, так как select с двумя моделями может некорректно обрабатываться
+    obs_ids = [row.id for row in paginated.items]
+    
+    # Выполняем отдельный запрос для получения данных с JOIN
+    if obs_ids:
+        data_query = sa.select(Observations, BmeHistory).select_from(
+            Observations
+        ).outerjoin(
+            BmeHistory,
+            sa.func.date(Observations.created_at) == sa.func.date(BmeHistory.date)
+        ).where(Observations.id.in_(obs_ids)).order_by(Observations.created_at.desc())
+        
+        rows = db.session.execute(data_query).all()
+    else:
+        rows = []
+    
+    # Преобразуем результаты в нужный формат
+    combined_data = []
+    for row in rows:
+        # row - это кортеж (observations_instance, bme_history_instance)
+        obs, bme = row
+        
+        # Извлекаем дату из наблюдения (берем только дату, без времени)
+        obs_date = obs.created_at.date()
+        
+        # Формируем объект с объединенными данными
+        combined_item = {
+            'date': obs_date,
+            'cloudiness': obs.cloudiness,
+            'precipitation': obs.precipitation,
+            'precipitation_rate': obs.precipitation_rate,
+            'snow_depth': obs.snow_depth,
+            'comment': obs.comment,
+            'min_temperature': bme.min_temperature if bme else None,
+            'max_temperature': bme.max_temperature if bme else None
+        }
+        combined_data.append(combined_item)
+    
+    next_url = url_for('observations.observations_combined', page=paginated.next_num, **url_args) \
+        if paginated.has_next else None
+    prev_url = url_for('observations.observations_combined', page=paginated.prev_num, **url_args) \
+        if paginated.has_prev else None
+
+    return render_template('observations/observations_combined.html',
+                          data=combined_data,
+                          next_url=next_url,
+                          prev_url=prev_url,
+                          table=combined_observations_table,
+                          filter_form=filter_form,
+                          start_date=start_date_str,
+                          end_date=end_date_str,
+                          add_table=observations_map)

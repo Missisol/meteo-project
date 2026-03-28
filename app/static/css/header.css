@@ -1,6 +1,10 @@
 /* https://moderncss.dev/css-only-accessible-dropdown-navigation-menu/ */
 /* https://pepelsbey.dev/articles/native-light-dark/  */
 
+
+/* TODO исправить стили для меню и лого при ширине вьюпорта от 700 до 800 px
+  лого сжимается, меню налезает на переключатель темы
+*/
 .header {
     padding-block: var(--gap4);
     display: flex;

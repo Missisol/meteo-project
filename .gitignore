@@ -40,6 +40,8 @@ venv
 app.db
 meteo.db
 meteo.log*
+mosquitto.db
+mosquitto.log*
 
 .env
 

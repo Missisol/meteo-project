@@ -73,9 +73,10 @@ class Observations(db.Model):
     snow_depth: so.Mapped[Optional[int]] = so.mapped_column(sa.Integer, default=0)
     created_at: so.Mapped[datetime] = so.mapped_column(
         index=True, default=lambda: datetime.now(timezone.utc))
+    comment: so.Mapped[Optional[str]] = so.mapped_column(sa.Text)
     
     def __repr__(self):
-        return f"id: {self.id}, cloudiness: {self.cloudiness}, precipitation: {self.precipitation}, snow_depth: {self.snow_depth}, precipitation_rate: {self.precipitation_rate}, created_at: {self.created_at}"
+        return f"id: {self.id}, cloudiness: {self.cloudiness}, precipitation: {self.precipitation}, snow_depth: {self.snow_depth}, precipitation_rate: {self.precipitation_rate}, created_at: {self.created_at}, comment: {self.comment}"
     
     def delete_observation(self):
         db.session.delete(self)
