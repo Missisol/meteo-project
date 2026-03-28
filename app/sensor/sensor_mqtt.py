@@ -1,6 +1,5 @@
 import json
 import logging
-import os
 import threading
 from dataclasses import dataclass
 from datetime import datetime, timezone
@@ -8,7 +7,7 @@ from typing import Optional
 
 from paho.mqtt import client as mqtt
 
-from app import db, models, socketio
+from app import db, models, current_app
 from app.sensor import telegram_sender
 
 logger = logging.getLogger(__name__)
@@ -26,9 +25,10 @@ class SensorConfig:
     """Конфигурация MQTT клиента."""
     broker_url: str
     broker_port: int = 1883
+    topic_esp8266: str = '',
     topic_bme280: str = ''
     topic_dht22: str = ''
-    mqtt_client_id: str = 'sensor'
+    mqtt_client_id: str = 'sensor',
 
 
 @dataclass
@@ -47,8 +47,8 @@ class MQTTSensorClient:
     # Слоты сохранения DHT22 (часы)
     DHT22_SLOTS = [3, 15]
 
-    def __init__(self, flask_app):
-        self.app = flask_app
+    def __init__(self, app):
+        self.app = app
         self._config: Optional[SensorConfig] = None
         self._state = SensorState()
         self._mqttc: Optional[mqtt.Client] = None
@@ -62,13 +62,15 @@ class MQTTSensorClient:
 
     def _load_config(self):
         """Загрузка конфигурации из переменных окружения."""
-        self._config = SensorConfig(
-            broker_url=os.environ['RPI_URL'],
-            broker_port=1883,
-            topic_bme280=os.environ['MQTT_TOPIC_BME280'],
-            topic_dht22=os.environ['MQTT_TOPIC_DHT22'],
-            mqtt_client_id=os.environ.get('MQTT_CLIENT_ID', 'sensor'),
-        )
+        with self.app.app_context():
+            self._config = SensorConfig(
+                broker_url=self.app.config['MQTT_BROKER_URL'],
+                broker_port=self.app.config['MQTT_BROKER_PORT'],
+                topic_esp8266=self.app.config['MQTT_TOPIC_ESP8266'],
+                topic_bme280 = self.app.config['MQTT_TOPIC_BME280'],
+                topic_dht22 = self.app.config['MQTT_TOPIC_DHT22'],
+                mqtt_client_id=self.app.config['MQTT_CLIENT_ID'],
+            )
 
     # --- Обработчики MQTT ---
 
@@ -76,8 +78,8 @@ class MQTTSensorClient:
         """Обработчик подключения к брокеру."""
         if rc == 0:
             logger.info("MQTT connected successfully")
-            client.subscribe(self._config.topic_bme280, qos=1)
-            client.subscribe(self._config.topic_dht22, qos=1)
+            topics = self._config.topic_esp8266
+            client.subscribe(topics, qos=1)
         else:
             logger.error(f"MQTT connection failed with code {rc}")
 
@@ -87,7 +89,6 @@ class MQTTSensorClient:
         payload = message.payload
         
         logger.debug(f"Received from {topic}: {payload}")
-        socketio.emit('other_message', payload)
 
         try:
             if topic == self._config.topic_bme280:
@@ -102,7 +103,6 @@ class MQTTSensorClient:
     def _handle_bme280(self, payload: bytes):
         """Обработка сообщений от BME280."""
         logger.debug("BME280 readings update")
-        socketio.emit('bme_message', payload.decode())
 
         data = self._parse_payload(payload)
         self._validate_bme280_data(data)
@@ -126,7 +126,6 @@ class MQTTSensorClient:
     def _handle_dht22(self, payload: bytes):
         """Обработка сообщений от DHT22."""
         logger.debug("DHT22 readings update")
-        socketio.emit('dht_message', payload.decode())
 
         data = self._parse_payload(payload)
         self._validate_dht22_data(data)
@@ -158,6 +157,7 @@ class MQTTSensorClient:
             logger.error(f"Invalid JSON payload: {e}")
             raise ValueError(f"Invalid payload format") from e
 
+
     def _validate_bme280_data(self, data: dict):
         """Валидация данных BME280."""
         required = ('temperature', 'humidity', 'pressure')
@@ -165,12 +165,14 @@ class MQTTSensorClient:
             if key not in data:
                 raise KeyError(f"Missing required field: {key}")
 
+
     def _validate_dht22_data(self, data: dict):
         """Валидация данных DHT22."""
         required = ('temperature1', 'humidity1', 'temperature2', 'humidity2')
         for key in required:
             if key not in data:
                 raise KeyError(f"Missing required field: {key}")
+
 
     def _is_valid_value(self, value: float, sensor_type: str) -> bool:
         """Проверка значения на допустимость."""
@@ -186,6 +188,7 @@ class MQTTSensorClient:
         
         last_save = self._state.last_bme280_save
         return last_save is None or last_save < current_hour
+
 
     def _should_save_dht22(self) -> bool:
         """Проверка, нужно ли сохранять данные DHT22 (в 03:00 и 15:00)."""
@@ -215,6 +218,7 @@ class MQTTSensorClient:
         
         return True
 
+
     def _save_bme280_and_notify(self, temperature: float, humidity: float, pressure: int):
         """Сохранение данных BME280 и отправка уведомления."""
         if not self._is_valid_value(temperature, 'temperature'):
@@ -239,6 +243,7 @@ class MQTTSensorClient:
         
         # Отправка в Telegram
         telegram_sender.get_telegram_sender().send_notification(temperature, humidity, pressure)
+
 
     def _save_dht22(self):
         """Сохранение данных DHT22."""
@@ -271,6 +276,7 @@ class MQTTSensorClient:
         
         logger.info(f"DHT22 saved: T1={data['temperature1']}, H1={data['humidity1']}")
 
+
     def _save_to_db(self, record):
         """Сохранение записи в БД."""
         with self.app.app_context():
@@ -298,11 +304,11 @@ class MQTTSensorClient:
 _mqtt_client: Optional[MQTTSensorClient] = None
 
 
-def init_mqtt(flask_app):
+def init_mqtt(current_app):
     """Инициализация MQTT клиента."""
     global _mqtt_client
-    telegram_sender.init_telegram(flask_app)
-    _mqtt_client = MQTTSensorClient(flask_app)
+    telegram_sender.init_telegram(current_app)
+    _mqtt_client = MQTTSensorClient(current_app)
     _mqtt_client.init()
 
 
