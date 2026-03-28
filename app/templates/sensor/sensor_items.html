@@ -35,7 +35,7 @@
 
 {% block script %}
     {{ super() }}
-    <script src="{{ url_for('static', filename='vendor/socket.io.min.js') }}" integrity="sha384-mkQ3/7FUtcGyoppY6bz/PORYoGqOl7/aSUMn2ymDOJcapfS6PHqxhRTMh1RR0Q6+" crossorigin="anonymous"></script>
+    <script src="{{ url_for('static', filename='vendor/mqtt.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/sensor.js') }}" type="module"></script>
 
     {% for prefix in list %}
