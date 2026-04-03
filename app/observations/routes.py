@@ -12,7 +12,7 @@ from app.main.forms import FilterForm
 from app.utils.date_filters import apply_date_filters
 
 
-@bp.route('/observations')
+@bp.route('/data/observations')
 def observations():
   add_form = ObservationForm()
   empty_form = EmptyForm()
