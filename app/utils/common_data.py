@@ -1,12 +1,22 @@
 main_menu = [
     { 'url': 'main.index', 'text': 'Датчик погоды'},   
     { 'url': 'sensor.sensors', 'text': 'Датчики в доме'},
-    { 'url': 'observations.observations', 'text': 'Наблюдения'},
-    { 'text': 'Таблицы', 'nested': [
-        { 'url': 'observations.observations_combined', 'text': 'Дневник наблюдений'},
-        { 'url': 'sensor.bme_history', 'text': 'BME280 история'},
-        { 'url': 'sensor.bme280_outer', 'text': 'BME280 внешний'},   
-        { 'url': 'sensor.dht22_outer', 'text': 'DHT22 внешние'},   
+    # { 'url': 'observations.observations', 'text': 'Наблюдения'},
+    {
+        'text': 'Данные',
+        'id': 'data',
+        'nested': [
+            { 'url': 'observations.observations', 'text': 'Наблюдения' },
+            { 'url': 'sensor.bme280_outer_data', 'text': 'BME280 внешний' },   
+        ]},
+    { 
+        'text': 'Таблицы', 
+        'id': 'tables',
+        'nested': [
+        { 'url': 'observations.observations_combined', 'text': 'Дневник наблюдений' },
+        { 'url': 'sensor.bme_history', 'text': 'BME280 история' },
+        { 'url': 'sensor.bme280_outer', 'text': 'BME280 внешний' },   
+        { 'url': 'sensor.dht22_outer', 'text': 'DHT22 внешние' },   
         # { 'url': 'sensor.bme280_rpi', 'text': 'BME280 RPI'},   
     ]},
     

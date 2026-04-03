@@ -30,6 +30,9 @@ class Bme280Outer(db.Model):
     def __repr__(self):
         return f"temperature: {self.temperature}, humidity: {self.humidity}, pressure: {self.pressure}, created_at: {self.created_at}, date: {self.date}"
         
+    def delete_record(self):
+        db.session.delete(self)
+
 
 class Dht22(db.Model):
     id: so.Mapped[int] = so.mapped_column(primary_key=True)
