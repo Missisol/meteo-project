@@ -4,9 +4,9 @@ from app import db
 import sqlalchemy as sa
 from app.sensor import bp
 from app.models import Bme280Rpi, Bme280Outer, Dht22, BmeHistory
-from app.sensor.forms import Bme280OuterEditForm, EmptyForm
+from app.sensor.forms import Bme280OuterEditForm
 from app.utils.sensor_data import bme_rpi_table, bme_outer_data, bme_outer_table, dht_outer_table, history_table
-from app.main.forms import FilterForm
+from app.main.forms import FilterForm, EmptyForm
 from app.utils.date_filters import apply_date_filters
 from app.sensor.sensor_mqtt import get_mqtt_client
 from app.sensor.sensor_rpi import BME280Module

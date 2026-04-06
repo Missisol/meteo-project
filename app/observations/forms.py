@@ -54,6 +54,3 @@ class EditForm(BaseObservationForm):
     """Форма для редактирования наблюдения."""
     id = HiddenField('id', id="editId")
     submit = SubmitField('Сохранить')
-
-class EmptyForm(FlaskForm):
-    submit = SubmitField('Удалить')

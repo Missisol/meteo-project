@@ -10,7 +10,3 @@ class Bme280OuterEditForm(FlaskForm):
     humidity = StringField('Влажность, %', validators=[Length(min=0, max=10)])
     pressure = StringField('Давление, мм.рт.ст.', validators=[Length(min=0, max=10)])
     submit = SubmitField('Сохранить')
-
-
-class EmptyForm(FlaskForm):
-    submit = SubmitField('Удалить')

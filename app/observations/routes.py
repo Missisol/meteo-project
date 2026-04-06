@@ -7,8 +7,8 @@ from app import db
 from app.observations import bp
 from app.models import Observations, BmeHistory
 from app.utils.observations_data import observations_table, observations_map
-from app.observations.forms import EmptyForm, ObservationForm, EditForm
-from app.main.forms import FilterForm
+from app.observations.forms import ObservationForm, EditForm
+from app.main.forms import FilterForm, EmptyForm
 from app.utils.date_filters import apply_date_filters
 
 
