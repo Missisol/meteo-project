@@ -2,13 +2,6 @@ main_menu = [
     { 'url': 'main.index', 'text': 'Датчик погоды'},   
     { 'url': 'sensor.sensors', 'text': 'Датчики в доме'},
     # { 'url': 'observations.observations', 'text': 'Наблюдения'},
-    {
-        'text': 'Данные',
-        'id': 'data',
-        'nested': [
-            { 'url': 'observations.observations', 'text': 'Наблюдения' },
-            { 'url': 'sensor.bme280_outer_data', 'text': 'BME280 внешний' },   
-        ]},
     { 
         'text': 'Таблицы', 
         'id': 'tables',
@@ -19,7 +12,13 @@ main_menu = [
         { 'url': 'sensor.dht22_outer', 'text': 'DHT22 внешние' },   
         # { 'url': 'sensor.bme280_rpi', 'text': 'BME280 RPI'},   
     ]},
-    
+        {
+        'text': 'Данные',
+        'id': 'data',
+        'nested': [
+            { 'url': 'observations.observations', 'text': 'Наблюдения' },
+            { 'url': 'sensor.bme280_outer_data', 'text': 'BME280 внешний' },   
+    ]},
 ]
 
 theme_switcher = [
