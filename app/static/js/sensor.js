@@ -5,10 +5,6 @@ const rpiT = document.querySelector('#rpi-temperature')
 const bmeT = document.querySelector('#bme-temperature')
 const dht1T = document.querySelector('#dht1-temperature')
 
-// const timer = 1000 * 60 * 5
-// const postfixBme = ['temperature', 'pressure', 'humidity', 'date']
-// const postfixDht = ['temperature', 'humidity', 'date']
-
 let MQTT_CONFIG = {
     mqtt_broker_url: 'localhost',
     ws_broker_port: 9001,
@@ -34,7 +30,7 @@ async function loadConfig() {
 
 function connectMQTT() {
     mqttClient = mqtt.connect(MQTT_URL, {
-        clientId: 'sensor_frontend_' + Math.random().toString(16).substr(2, 8),
+        clientId: 'sensor_frontend_' + Math.random().toString(16).slice(2, 10),
         clean: true,
         connectTimeout: 4000,
         reconnectPeriod: 1000,

@@ -18,7 +18,7 @@ async function getOuterData(id) {
   try {
     const response = await fetch(`${api.bme280_outer}/${id}/data`)
     const data = await response.json()
-    editDialog.querySelector('#created-at').textContent = data.created_at
+    editDialog.querySelector('#created-at').textContent = new Date(data.created_at).toLocaleString('ru')
     editDialog.querySelector('#temperature').value = data?.temperature || ''
     editDialog.querySelector('#humidity').value = data?.humidity || ''
     editDialog.querySelector('#pressure').value = data?.pressure || ''

@@ -1,25 +1,8 @@
-<dialog id="edit-dialog" class="dialog-modal dialog" closedby="any">
-    {% with title='Редактировать запись', commandfor='edit-dialog' %}
-        {% include 'includes/form_heading.html' %}
-    {% endwith %}
-    <form id="edit-form" method="post" action="{{ url_for('sensor.update_outer', id=0) }}">
-        {{ edit_form.hidden_tag() }}
-        <div class="form-group">
-            <p>Дата</p>
-            <p id="created-at" name="created_at"></p>
-        </div>
-        <div class="form-group">
-            {{ edit_form.temperature.label }}
-            {{ edit_form.temperature(class="form-control") }}
-        </div>
-        <div class="form-group">
-            {{ edit_form.humidity.label }}
-            {{ edit_form.humidity(class="form-control") }}
-        </div>
-        <div class="form-group">
-            {{ edit_form.pressure.label }}
-            {{ edit_form.pressure(class="form-control") }}
-        </div>
-        {{ edit_form.submit(class="button button--blue") }}
-    </form>
-</dialog>
+{% with 
+    title='Редактировать запись',
+    action_url=url_for('sensor.update_outer', id=0),
+    form=edit_form,
+    form_partial='sensor/_sensor_form_fields.html'
+%}
+    {% include 'includes/edit_modal.html' %}
+{% endwith %}

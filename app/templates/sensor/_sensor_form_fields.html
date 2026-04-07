@@ -1,0 +1,13 @@
+{# Поля формы для данных сенсора. Принимает переменную `form` #}
+<div class="form-group">
+    {{ form.temperature.label }}
+    {{ form.temperature(class="form-control") }}
+</div>
+<div class="form-group">
+    {{ form.humidity.label }}
+    {{ form.humidity(class="form-control") }}
+</div>
+<div class="form-group">
+    {{ form.pressure.label }}
+    {{ form.pressure(class="form-control") }}
+</div>
