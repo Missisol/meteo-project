@@ -4,8 +4,8 @@ const items = document.querySelectorAll('.nav__item')
 const colorScheme = document.querySelector('meta[name=color-scheme]')
 const switchButtons = document.querySelectorAll('.theme-switcher__button')
 
-const nested = document.querySelector('#menu-dropdown')
-const navButton = document.querySelector('.nav__button')
+const nesteds = document.querySelectorAll('.nested')
+// const navButtons = document.querySelectorAll('.nav__button')
 
 const menuToggle = document.querySelector('.menu-toggle')
 const menuClose = document.querySelector('.menu-close')
@@ -13,6 +13,7 @@ const mobileMenu = document.querySelector('#mobile-menu')
 const mobileMenuOverlay = document.querySelector('.mobile-menu-overlay')
 
 items.forEach((item) => {
+    // const a = `${item.dataset.url}`
     const a = `${item.dataset.url.split('.')[1]}`
     const b = pathname.split('/').at(-1)
     if (a === b || (a === 'index' && (b === 'home' || b === ''))) {
@@ -23,13 +24,16 @@ items.forEach((item) => {
 })
 
 document.body.addEventListener('click', (e) => {
-    if (nested.classList.contains('open')) {
-        nested.classList.remove('open')
-        navButton.setAttribute('aria-expanded', false)
-    } else if (e.target === navButton && !nested.classList.contains('open')) {
-        nested.classList.add('open')
-        navButton.setAttribute('aria-expanded', true)
-    }
+    nesteds.forEach((nested) => {
+        const navButton = document.querySelector(`.nav__button-${nested.dataset.id}`)
+        if (nested.classList.contains('open')) {
+            nested.classList.remove('open')
+            navButton.setAttribute('aria-expanded', false)
+        } else if (e.target === navButton && !nested.classList.contains('open')) {
+            nested.classList.add('open')
+            navButton.setAttribute('aria-expanded', true)
+        }
+    })
 })
 
 menuToggle.addEventListener('click', () => {

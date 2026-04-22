@@ -1,9 +1,5 @@
 import { api } from "./api.js"
 
-// create dialog
-const createDialog = document.querySelector('#create-dialog') // диалог создания
-const createButton = document.querySelector('#create-button') // кнопка открытия диалога
-const closeCreateDialog = document.querySelector('#create-close') // кнопка закрытия диалога
 // delete dialog
 const deleteButtons = document.querySelectorAll('#delete-button') // кнопки открытия диалога удаления
 const deleteDialog = document.querySelector('#delete-dialog') // диалог удаления
@@ -13,42 +9,32 @@ const editButtons = document.querySelectorAll('#edit-button') // кнопки о
 const editDialog = document.querySelector('#edit-dialog') // диалог редактирования
 const closeEditDialog = document.querySelector('#edit-close') // кнопка закрытия диалога редактирования
 
-async function getObservationData(id) {
+async function getOuterData(id) {
   editDialog.querySelector('#editId').value = id
+  // Обновляем action формы с правильным id
+  const form = editDialog.querySelector('#edit-form')
+  form.action = `${api.bme280_outer}/${id}/update`
+  
   try {
-    const response = await fetch(`${api.observations}/${id}/data`)
+    const response = await fetch(`${api.bme280_outer}/${id}/data`)
     const data = await response.json()
-    editDialog.querySelector('#created-at').textContent = data.created_at
-    editDialog.querySelector('#cloudiness').value = data?.cloudiness || 'clear'
-    editDialog.querySelector('#precipitation').value = data?.precipitation || 'none'
-    editDialog.querySelector('#precipitation_rate').value = data?.precipitation_rate || 'none'
-    editDialog.querySelector('#snow_depth').value = data?.snow_depth || 0
-    editDialog.querySelector('#comment').value = data?.comment || ''
+    editDialog.querySelector('#created-at').textContent = new Date(data.created_at).toLocaleString('ru')
+    editDialog.querySelector('#temperature').value = data?.temperature || ''
+    editDialog.querySelector('#humidity').value = data?.humidity || ''
+    editDialog.querySelector('#pressure').value = data?.pressure || ''
   } catch (error) {
-    console.error('Error fetching observation data:', error)
+    console.error('Error fetching outer data:', error)
     alert('Ошибка при загрузке данных записи')
   }
 }
 
 function init() {
-  if (createDialog && createButton) {
-    createButton.addEventListener('click', () => {
-      createDialog.showModal()
-    })
-  }
-
-    if (createDialog &&closeCreateDialog) {
-    closeCreateDialog.addEventListener('click', () => {
-      createDialog.close()
-    })
-  }
-
   if (editButtons.length && editDialog) {
     editButtons.forEach((button) => {
       button.addEventListener('click', (e) => {
         const id = e.currentTarget.dataset.id
         if (!id) return
-        getObservationData(id)
+        getOuterData(id)
         editDialog.showModal()
       })
     })
@@ -56,10 +42,9 @@ function init() {
 
   if (closeEditDialog && editDialog) {
     closeEditDialog.addEventListener('click', () => {
-      editDialog.hidePopover()
+      editDialog.close()
     })
   }
-
 
   if (closeDeleteDialog && deleteDialog) {
     closeDeleteDialog.addEventListener('click', () => {
@@ -74,15 +59,15 @@ function init() {
         if (!id) return
         const form = deleteDialog.querySelector(`#delete-form`)
         if (form) {
-          form.action = `${api.observations}/${id}/delete`
+          form.action = `${api.bme280_outer}/${id}/delete`
         }
-        // Загружаем дату наблюдения для отображения
+        // Загружаем дату записи для отображения
         try {
-          const response = await fetch(`${api.observations}/${id}/data`)
+          const response = await fetch(`${api.bme280_outer}/${id}/data`)
           const data = await response.json()
           deleteDialog.querySelector('#delete-date').textContent = data.created_at
         } catch (error) {
-          console.error('Error fetching observation data:', error)
+          console.error('Error fetching outer data:', error)
         }
         deleteDialog.showModal()
       })

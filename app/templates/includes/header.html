@@ -18,13 +18,13 @@
                     {% if item.nested and not item.url %}
                     <button 
                         type="button"
-                        class="nav__button"
+                        class="nav__button-{{ item.id }}"
                         aria-expanded="false"
                         aria-controls="menu-dropdown"
                     >
                         {{ item.text }}
                     </button>
-                    <ul class="nested" id="menu-dropdown">
+                    <ul class="nested" data-id="{{ item.id }}">
                         {% for i in item.nested %}
                         <li class="nav__item" data-url="{{ i.url }}">
                             <a href="{{ url_for(i.url) }}">{{ i.text }}</a>

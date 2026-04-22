@@ -160,7 +160,7 @@
   color: var(--base-blue-color);
 }
 
-.nav__button {
+[class^="nav__button-"]  {
   background: transparent;
   border: none;
   color: inherit;

@@ -1,6 +1,7 @@
 // apexcharts https://apexcharts.com/docs/creating-first-javascript-chart/
 
 import { getMaxDateForCalehdar } from "./helpers.js"
+import { api } from "./api.js"
 
 const formEl = document.querySelector('#history-form')
 const startInput = document.querySelector('#start-date')
@@ -83,7 +84,7 @@ function initForm() {
 }
 
 async function getHistoryData(params) {
-  const url = params ? `/api/json_history?${params}` : '/api/json_history'
+  const url = params ? `${api.json_history}?${params}` : api.json_history
   const response = await fetch(url)
   const res = await response.json()
   updateCharts(res.toReversed())

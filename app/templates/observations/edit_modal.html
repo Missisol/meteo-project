@@ -1,16 +1,8 @@
-<dialog id="edit-dialog" class="dialog-modal dialog" closedby="any">
-    {% with title='Редактировать наблюдение', commandfor='edit-dialog' %}
-        {% include 'includes/form_heading.html' %}
-    {% endwith %}
-    <form id="edit-form" method="post" action="{{ url_for('observations.update_observation')}}">
-        {{ edit_form.hidden_tag() }}
-        <div class="form-group">
-            <p>Дата</p>
-            <p id="created-at" name="created_at"></p>
-        </div>
-        {% with form = edit_form %}
-            {% include 'observations/_observation_form_fields.html' %}
-        {% endwith %}
-        {{ edit_form.submit(class="button button--blue") }}
-    </form>
-</dialog>
+{% with 
+    title='Редактировать наблюдение',
+    action_url=url_for('observations.update_observation'),
+    form=edit_form,
+    form_partial='observations/_observation_form_fields.html'
+%}
+    {% include 'includes/edit_modal.html' %}
+{% endwith %}

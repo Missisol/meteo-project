@@ -60,13 +60,14 @@ class TelegramSender:
 _telegram_sender: Optional[TelegramSender] = None
 
 
-def init_telegram(flask_app) -> TelegramSender:
+def init_telegram(app) -> TelegramSender:
     """Инициализация Telegram отправщика."""
     global _telegram_sender
-    config = TelegramConfig(
-        bot_token=flask_app.config.get('BOT_TOKEN', ''),
-        chat_id=flask_app.config.get('CHAT_ID', ''),
-    )
+    with app.app_context():
+        config = TelegramConfig(
+            bot_token=app.config['BOT_TOKEN'],
+            chat_id=app.config['CHAT_ID'],
+        )
     _telegram_sender = TelegramSender(config)
     return _telegram_sender
 

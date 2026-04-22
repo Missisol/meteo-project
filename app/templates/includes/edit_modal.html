@@ -1,0 +1,24 @@
+{# 
+    Универсальный шаблон модального окна редактирования.
+    Принимает переменные:
+    - title: заголовок модального окна
+    - action_url: URL для отправки формы
+    - form: объект формы (WTForms)
+    - form_partial: путь к partial-шаблону с полями формы
+#}
+<dialog id="edit-dialog" class="dialog-modal dialog" closedby="any">
+    {% with title=title, commandfor='edit-dialog' %}
+        {% include 'includes/form_heading.html' %}
+    {% endwith %}
+    <form id="edit-form" method="post" action="{{ action_url }}">
+        {{ form.hidden_tag() }}
+        <div class="form-group">
+            <p>Дата</p>
+            <p id="created-at" name="created_at"></p>
+        </div>
+        {% with form = form %}
+            {% include form_partial %}
+        {% endwith %}
+        {{ form.submit(class="button button--blue") }}
+    </form>
+</dialog>

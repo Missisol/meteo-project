@@ -1,9 +1,9 @@
 from datetime import datetime, date, timezone
-from flask import render_template, request, url_for, jsonify
+from flask import render_template, jsonify
 from flask_babel import format_datetime
 import sqlalchemy as sa
 
-from app import db
+from app import db, current_app
 from app.main import bp
 from app.models import Bme280Outer
 from app.utils.sensor_data import list_bme, list_dht, sensors_list, weather_list
@@ -21,6 +21,7 @@ def datetimeformat(value):
 def dateformat(value):
     return format_datetime(value, 'd.MM.yyyy')
     # return datetime.strftime(value, '%d.%m.%y')
+    
 
 @bp.app_template_filter('time')
 def timeformat(value):
@@ -34,7 +35,20 @@ def timeformat(value):
 @bp.route('/home')
 def index():
     return render_template('main/home.html', title='Home')
+    
 
+@bp.route('/api/config')
+def get_config():
+    return jsonify(
+        {
+            'mqtt_broker_url': current_app.config['MQTT_BROKER_URL'],
+            'ws_broker_port': current_app.config['WS_BROKER_PORT'],
+            'mqtt_topic_esp8266': current_app.config['MQTT_TOPIC_ESP8266'],
+            'mqtt_topic_bme280': current_app.config['MQTT_TOPIC_BME280'],
+            'mqtt_topic_dht22': current_app.config['MQTT_TOPIC_DHT22'],
+        }
+    )
+    
 
 @bp.route('/bme280Outer')
 def get_bme_mqtt_data():

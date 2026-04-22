@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block head %}
+  {{ super() }}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/table.css')}}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/form.css')}}" />
+{% endblock %}
+
+
+{% block content %}
+<div class="sensor-outer">
+  <h1 class="page-title">{{ title }}</h1>
+  <div class="controls controls--sensor-outer">
+    <button type="button" class="button button--blue" id="filter-button">Задать период</button>
+    {% if start_date and end_date %}
+    <a href="{{ request.path }}" class="button button--invert">Сбросить фильтр</a>
+    {% else %}
+    <button class="button button--invert disabled">Сбросить фильтр</button>
+    {% endif %}
+  </div>
+  {%  include 'includes/popover_flash.html' %}
+  {% include 'sensor/bme280_outer_table.html' %}
+  {% include 'sensor/edit_outer_modal.html' %}
+  {% include 'sensor/delete_outer_modal.html' %}
+  {% include 'includes/filter_modal.html' %}
+</div>
+{% endblock %}
+
+{% block script %}
+  {{ super() }}
+  <script src="{{ url_for('static', filename='js/sensor_outer.js') }}" type="module"></script>
+  <script src="{{ url_for('static', filename='js/modal.js') }}"></script>
+{% endblock %}

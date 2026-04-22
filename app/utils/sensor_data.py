@@ -34,30 +34,26 @@ sensors_list = ['rpi', 'dht1', 'dht2']
 weather_list = ['bme']
 
 bme_rpi_table = {
-    # 'th': ['id', 'created at (utc)', 'temperature', 'humidity', 'pressure'],
-    # 'td': ['id', 'created_at', 'temperature', 'humidity', 'pressure']
     'th': ['Дата - время (МСК)', 'Температура, &deg;C', 'Влажность, %', 'Давление, мм.рт.ст.'],
     'td': ['created_at', 'temperature', 'humidity', 'pressure']
 }
 
+bme_outer_data = {
+    'th': ['Дата - время (МСК)', 'Температура, &deg;C', 'Влажность, %', 'Давление, мм.рт.ст.', 'Действия'],
+    'td': ['created_at', 'temperature', 'humidity', 'pressure', 'actions']
+}
+
 bme_outer_table = {
-    # 'th': ['id', 'created at', 'date', 'temperature', 'humidity', 'pressure'],
-    # 'td': ['id', 'created_at', 'date', 'temperature', 'humidity', 'pressure']
     'th': ['Дата - время (МСК)', 'Температура, &deg;C', 'Влажность, %', 'Давление, мм.рт.ст.'],
     'td': ['created_at', 'temperature', 'humidity', 'pressure']
 }
 
 dht_outer_table = {
-    # 'th': ['id', 'created at (utc)', 'temperature 1', 'humidity 1', 'temperature 2', 'humidity 2'],
-    # 'td': ['id', 'created_at', 'temperature1', 'humidity1', 'temperature2', 'humidity2']
-
     'th': ['Дата - время (МСК)', 'Температура 1, &deg;C', 'Влажность 1, %', 'Температура 2, &deg;C', 'Влажность 2, %'],
     'td': ['created_at', 'temperature1', 'humidity1', 'temperature2', 'humidity2']
 }
 
 history_table = {
-    # 'th': ['id', 'date', 'min temperature', 'max temperature', 'min humidity', 'max humidity', 'min pressure', 'max pressure'],
-    # 'td': ['id', 'date', 'min_temperature', 'max_temperature', 'min_humidity', 'max_humidity', 'min_pressure', 'max_pressure']
     'th': [
       'Дата', 
       'Температура мин., &deg;C', 

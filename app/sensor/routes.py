@@ -1,11 +1,12 @@
 from datetime import datetime, date, timezone, timedelta
-from flask import render_template, request, url_for, current_app, jsonify, flash
+from flask import render_template, request, url_for, current_app, jsonify, flash, abort, redirect
 from app import db
 import sqlalchemy as sa
 from app.sensor import bp
 from app.models import Bme280Rpi, Bme280Outer, Dht22, BmeHistory
-from app.utils.sensor_data import bme_rpi_table, bme_outer_table, dht_outer_table, history_table
-from app.main.forms import FilterForm
+from app.sensor.forms import Bme280OuterEditForm
+from app.utils.sensor_data import bme_rpi_table, bme_outer_data, bme_outer_table, dht_outer_table, history_table
+from app.main.forms import FilterForm, EmptyForm
 from app.utils.date_filters import apply_date_filters
 from app.sensor.sensor_mqtt import get_mqtt_client
 from app.sensor.sensor_rpi import BME280Module
@@ -41,7 +42,7 @@ def bme280_rpi():
 
 @bp.route('/table/bme280_outer')
 def bme280_outer():
-    """Return BME280 Outer data from db with pagination - for table"""
+    """Return BME280 Outer data from db with pagination - for table (read-only)"""
     filter_form = FilterForm()
     page = request.args.get('page', 1, type=int)
     
@@ -264,3 +265,90 @@ def get_dht22_mqtt_data():
                 'created_at': None,
             }
         )
+
+
+@bp.route('/data/bme280_outer_data')
+def bme280_outer_data():
+    """Return BME280 Outer data from db with pagination - for table (with edit/delete)"""
+    filter_form = FilterForm()
+    edit_form = Bme280OuterEditForm()
+    empty_form = EmptyForm()
+    page = request.args.get('page', 1, type=int)
+    
+    query = sa.select(Bme280Outer)
+    query, url_args, start_date_str, end_date_str, start_date, end_date = apply_date_filters(
+        query, Bme280Outer, filter_form, current_app.config['TIMEZONE'], 'datetime'
+    )
+
+    query = query.order_by(Bme280Outer.created_at.desc())
+    data = db.paginate(query, page=page, per_page=current_app.config['ITEMS_PER_PAGE'], error_out=False)
+
+    next_url = url_for('sensor.bme280_outer_data', page=data.next_num, **url_args) \
+        if data.has_next else None
+    prev_url = url_for('sensor.bme280_outer_data', page=data.prev_num, **url_args) \
+        if data.has_prev else None
+    
+    return render_template('sensor/bme280_outer.html', title='BME280 внешний', data=data.items, next_url=next_url, prev_url=prev_url, table=bme_outer_data, filter_form=filter_form, start_date=start_date_str, end_date=end_date_str, edit_form=edit_form, empty_form=empty_form)
+
+
+@bp.route('/api/bme280_outer/<int:id>/data')
+def get_outer_data(id):
+    """Return BME280 Outer data by id for editing"""
+    record = db.session.get(Bme280Outer, id)
+    if record is None:
+        abort(404)
+    return jsonify({
+        'id': record.id,
+        'temperature': record.temperature,
+        'humidity': record.humidity,
+        'pressure': record.pressure,
+        'created_at': record.created_at.isoformat() if record.created_at else None,
+    })
+
+
+@bp.route('/api/bme280_outer/<int:id>/update', methods=['POST'])
+def update_outer(id):
+    """Update BME280 Outer record"""
+    form = Bme280OuterEditForm()
+    if not form.validate_on_submit():
+        flash('Ошибка валидации формы', 'error')
+        return redirect(url_for('sensor.bme280_outer_data'))
+    
+    record = db.session.get(Bme280Outer, id)
+    if record is None:
+        flash('Запись не найдена', 'warning')
+        return redirect(url_for('sensor.bme280_outer_data'))
+    
+    try:
+        temperature = request.form.get('temperature')
+        humidity = request.form.get('humidity')
+        pressure = request.form.get('pressure')
+        
+        if temperature:
+            record.temperature = float(temperature)
+        if humidity:
+            record.humidity = float(humidity)
+        if pressure:
+            record.pressure = int(pressure)
+        
+        db.session.commit()
+        flash('Запись успешно обновлена', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Ошибка при обновлении записи: {str(e)}', 'error')
+    
+    return redirect(url_for('sensor.bme280_outer_data'))
+
+
+@bp.route('/api/bme280_outer/<int:id>/delete', methods=['POST'])
+def delete_outer(id):
+    """Delete BME280 Outer record"""
+    form = EmptyForm()
+    if form.validate_on_submit():
+        record = db.session.get(Bme280Outer, id)
+        if record:
+            record.delete_record()
+            db.session.commit()
+            flash('Запись успешно удалена', 'success')
+            return redirect(url_for('sensor.bme280_outer_data'))
+    return redirect(url_for('sensor.bme280_outer_data'))

@@ -1,0 +1,8 @@
+{% with 
+    title='Редактировать запись',
+    action_url=url_for('sensor.update_outer', id=0),
+    form=edit_form,
+    form_partial='sensor/_sensor_form_fields.html'
+%}
+    {% include 'includes/edit_modal.html' %}
+{% endwith %}

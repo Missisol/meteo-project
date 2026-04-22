@@ -2,14 +2,10 @@ import ast
 import logging
 from logging.handlers import RotatingFileHandler
 import os
-import requests
-import time
-from datetime import datetime, timedelta, timezone
 from flask import Flask, request, current_app
 from config import Config
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from flask_socketio import SocketIO
 from flask_babel import Babel
 
 def get_locale():
@@ -21,7 +17,6 @@ def get_timezone():
 
 db = SQLAlchemy()
 migrate = Migrate()
-socketio = SocketIO()
 babel = Babel()
 
 
@@ -31,7 +26,6 @@ def create_app(config_class=Config):
 
     db.init_app(app)
     migrate.init_app(app, db)
-    socketio.init_app(app)
     babel.init_app(app, locale_selector=get_locale, timezone_selector=get_timezone)
 
     from app.errors import bp as errors_bp
