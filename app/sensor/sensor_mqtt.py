@@ -8,7 +8,7 @@ from typing import Optional
 from paho.mqtt import client as mqtt
 
 from app import db, models, current_app
-from app.sensor import telegram_sender
+# from app.sensor import telegram_sender
 
 logger = logging.getLogger(__name__)
 
@@ -242,7 +242,7 @@ class MQTTSensorClient:
         logger.info(f"BME280 saved: T={temperature}, H={humidity}, P={pressure}")
         
         # Отправка в Telegram
-        telegram_sender.get_telegram_sender().send_notification(temperature, humidity, pressure)
+        # telegram_sender.get_telegram_sender().send_notification(temperature, humidity, pressure) # Отключена отправка в ТГ
 
 
     def _save_dht22(self):
@@ -307,7 +307,7 @@ _mqtt_client: Optional[MQTTSensorClient] = None
 def init_mqtt(current_app):
     """Инициализация MQTT клиента."""
     global _mqtt_client
-    telegram_sender.init_telegram(current_app)
+    # telegram_sender.init_telegram(current_app)
     _mqtt_client = MQTTSensorClient(current_app)
     _mqtt_client.init()
 
